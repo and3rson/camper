@@ -1,0 +1,21 @@
+version: '2.1'
+services:
+    app:
+        image: camper
+        environment:
+            DJANGO_SETTINGS_MODULE: camper.settings
+            PYTHONUNBUFFERED: 0
+        command: ./bin/entrypoint.sh
+        volumes:
+            - ./camper:/root/camper/camper
+        links:
+            - postgres
+        ports:
+            - 9090:9090
+    postgres:
+        image: postgres:9
+        environment:
+            POSTGRES_USER: camper
+            POSTGRES_PASSWORD: camper
+            POSTGRES_DB: camper
+
