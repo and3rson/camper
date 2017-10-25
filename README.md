@@ -1,2 +1,2 @@
-![Relations graph](docs/relations.dot)
+![Relations graph](docs/relations.dot?raw=true)
 
