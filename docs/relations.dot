@@ -1,0 +1,41 @@
+digraph A {
+    node[shape="box", style="filled", fontname="sans-serif", color="navy", fillcolor="blue", fontcolor="white"];
+    edge[color="darkgreen"];
+    subgraph cluster_0 {
+        label = "Channels";
+        fontname = "sans-serif";
+        channel1[label="Channel"];
+        channel2[label="Channel"];
+    }
+    subgraph cluster_1 {
+        label = "Values";
+        fontname = "sans-serif";
+        value1[label="Value"];
+        value2[label="Value"];
+        value3[label="Value"];
+        value4[label="Value"];
+        value5[label="Value"];
+    }
+    subgraph cluster_2 {
+        label = "Things";
+        fontname = "sans-serif";
+        thing1[label="Thing"];
+        thing2[label="Thing"];
+    }
+    incoming1 [label="Request from sensor 1"];
+    incoming2 [label="Request from sensor 2"];
+    incoming1 -> channel1;
+    incoming2 -> channel2;
+    channel1 -> value1;
+    channel1 -> value2;
+    channel1 -> value3;
+    channel2 -> value4 [color="gold3"];
+    channel2 -> value5 [color="gold3"];
+    value1 -> thing1;
+    value2 -> thing1;
+    value3 -> thing1;
+    value3 -> thing2;
+    value4 -> thing2 [color="gold3"];
+    value5 -> thing2 [color="gold3"];
+}
+
