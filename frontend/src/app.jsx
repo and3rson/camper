@@ -9,6 +9,11 @@ import { Container, Row, Col } from 'react-grid-system';
 import FlatButton from 'material-ui/FlatButton';
 //import SvgIcon, WbSunny from 'material-ui/SvgIcon';
 import ImageWbSunny from 'material-ui/svg-icons/image/wb-sunny.js';
+import DashboardIcon from 'material-ui/svg-icons/action/dashboard.js';
+import ChannelsIcon from 'material-ui/svg-icons/communication/call-split.js';
+//import ChannelsIcon from 'material-ui/svg-icons/action/settings-input-component.js';
+import ValuesIcon from 'material-ui/svg-icons/editor/insert-drive-file.js';
+import ThingsIcon from 'material-ui/svg-icons/device/nfc.js';
 import { yellow500 } from 'material-ui/styles/colors';
 //import { Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
 import { List, ListItem } from 'material-ui/List';
@@ -37,13 +42,20 @@ class Sidebar extends React.Component {
         });
     }
 
+    getStyle(value) {
+        if (value == (getHash() || 'dashboard')) {
+            return {backgroundColor: '#E8E8E8'};
+        }
+        return {};
+    }
+
     render() {
         return (
             <Menu autoWidth={true} onChange={this.onMenuItemChange.bind(this)}>
-                <MenuItem primaryText="Dashboard" value="dashboard" />
-                <MenuItem primaryText="Channels" value="channels" />
-                <MenuItem primaryText="Values" value="values" />
-                <MenuItem primaryText="Things" value="things" />
+                <MenuItem primaryText="Dashboard" value="dashboard" leftIcon={<DashboardIcon />} style={this.getStyle('dashboard')} />
+                <MenuItem primaryText="Channels" value="channels" leftIcon={<ChannelsIcon />} style={this.getStyle('channels')} />
+                <MenuItem primaryText="Values" value="values" leftIcon={<ValuesIcon />} style={this.getStyle('values')} />
+                <MenuItem primaryText="Things" value="things" leftIcon={<ThingsIcon />} style={this.getStyle('things')} />
             </Menu>
         );
     }
@@ -58,11 +70,57 @@ class DashboardPage extends React.Component {
     constructor() {
         super();
 
-        this.state = {};
+        this.state = {
+            thingsCount: api.data.things.length,
+            valuesCount: api.data.values.length,
+            channelsCount: api.data.channels.length
+        };
+        this.updateThingsCount = this.updateThingsCount.bind(this);
+        this.updateValuesCount = this.updateValuesCount.bind(this);
+        this.updateChannelsCount = this.updateChannelsCount.bind(this);
+    }
+
+    componentDidMount() {
+        api.on('things:change', this.updateThingsCount);
+        api.on('values:change', this.updateValuesCount);
+        api.on('channels:change', this.updateChannelsCount);
+    }
+
+    componentWillUnmount() {
+        api.removeListener('things:change', this.updateThingsCount);
+        api.removeListener('values:change', this.updateValuesCount);
+        api.removeListener('channels:change', this.updateChannelsCount);
+    }
+
+    updateThingsCount(things) {
+        this.setState({thingsCount: things.length});
+    }
+
+    updateValuesCount(values) {
+        this.setState({valuesCount: values.length});
+    }
+
+    updateChannelsCount(channels) {
+        this.setState({channelsCount: channels.length});
     }
 
     render() {
-        return <h1>Dashboard</h1>;
+        return (
+            <Row>
+                <Col xs={12} md={4} style={{textAlign: 'center'}}>
+                    <h1>{this.state.thingsCount}</h1>
+                    <div>Things</div>
+                </Col>
+                <Col xs={12} md={4} style={{textAlign: 'center'}}>
+                    <h1>{this.state.valuesCount}</h1>
+                    <div>Values</div>
+                </Col>
+                <Col xs={12} md={4} style={{textAlign: 'center'}}>
+                    <h1>{this.state.channelsCount}</h1>
+                    <div>Channels</div>
+                </Col>
+            </Row>
+        );
     }
 }
 
@@ -73,7 +131,16 @@ class ChannelsPage extends React.Component {
         this.state = {
             channels: api.data.channels
         };
-        api.on('channels:change', channels => this.setState({channels: channels}));
+        this.updateChannels = this.updateChannels.bind(this);
+    }
+    componentDidMount() {
+        api.on('channels:change', this.updateChannels);
+    }
+    componentWillUnmount() {
+        api.removeListener('channels:change', this.updateChannels);
+    }
+    updateChannels(channels) {
+        this.setState({channels: channels});
     }
     render() {
         return (
@@ -120,7 +187,16 @@ class ValuesPage extends React.Component {
         this.state = {
             values: api.data.values
         };
-        api.on('values:change', values => this.setState({values: values}));
+        this.updateValues = this.updateValues.bind(this);
+    }
+    componentDidMount() {
+        api.on('values:change', this.updateValues);
+    }
+    componentWillUnmount() {
+        api.removeListener('values:change', this.updateValues);
+    }
+    updateValues(values) {
+        this.setState({values: values});
     }
     render() {
         return (
@@ -183,18 +259,29 @@ class ThingsPage extends React.Component {
         this.state = {
             things: api.data.things
         };
-        api.on('things:change', things => this.setState({things: things}));
+        this.updateThings = this.updateThings.bind(this);
     }
-
+    componentDidMount() {
+        api.on('things:change', this.updateThings);
+    }
+    componentWillUnmount() {
+        api.removeListener('things:change', this.updateThings);
+    }
+    updateThings(things) {
+        this.setState({things: things});
+    }
     render() {
         return (
-            <Row>
-                {this.state.things.map((thing, i) => (
-                    <Col xs={12} md={6} lg={4} key={i}>
-                        <ThingView model={thing} key={i} />
-                    </Col>
-                ))}
-            </Row>
+            <div>
+                <Subheader>Things</Subheader>
+                <Row>
+                    {this.state.things.map((thing, i) => (
+                        <Col xs={12} md={6} lg={4} key={i}>
+                            <ThingView model={thing} key={i} />
+                        </Col>
+                    ))}
+                </Row>
+            </div>
         );
     }
 }
