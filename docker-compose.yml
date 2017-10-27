@@ -12,6 +12,13 @@ services:
             - postgres
         ports:
             - 9090:9090
+    #frontend:
+    #    image: camper-frontend
+    #    command: npm start
+    #    ports:
+    #        - 9091:9091
+    #    links:
+    #        - app
     postgres:
         image: postgres:9
         environment:

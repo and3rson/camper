@@ -1,0 +1,23 @@
+- model: channels.InputChannel
+  pk: dht11
+  fields:
+      description: Kitchen sensor channel
+
+- model: channels.Value
+  pk: dht11-temp
+  fields:
+      description: Temperature value
+      channel: dht11
+      json_path: '$.temperature'
+      value_type: 'temperature'
+      data: 27
+
+- model: channels.Value
+  pk: dht11-humid
+  fields:
+      description: Humidity value
+      channel: dht11
+      json_path: '$.humidity'
+      value_type: 'humidity'
+      data: 70
+

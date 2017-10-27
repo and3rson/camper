@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -138,5 +139,18 @@ GRAPPELLI_SWITCH_USER = True
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [],
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        # 'camper.core.parsers.DataQueryParser',
+        'rest_framework_yaml.parsers.YAMLParser',
+    ),
 }
+
+# CORS
+
+CORS_ORIGIN_REGEX_WHITELIST = [
+    r'http(s?):\/\/(127\.0\.0\.1|172\.[\d]+\.[\d]+\.[\d]+|localhost|::1):(9090|9091)'
+]
+
+CORS_ALLOW_CREDENTIALS = True
 

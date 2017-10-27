@@ -9,7 +9,7 @@ RUN \
     apt-get update
 RUN \
     apt-get install --assume-yes \
-    software-properties-common wget
+    software-properties-common wget netcat
 
 RUN mkdir /root/camper
 WORKDIR /root/camper
@@ -19,9 +19,6 @@ COPY ./requirements.txt /root/camper
 RUN \
     pip install -r ./requirements.txt
 
-RUN \
-    apt-get install --assume-yes \
-    netcat
 COPY ./manage.py /root/camper
 COPY ./camper /root/camper/camper
 COPY ./bin /root/camper/bin

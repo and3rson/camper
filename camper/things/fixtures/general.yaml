@@ -1,0 +1,9 @@
+- model: things.Thing
+  pk: dht11
+  fields:
+    name: Kitchen sensor
+    type: sensor
+    values:
+        - dht11-temp
+        - dht11-humid
+

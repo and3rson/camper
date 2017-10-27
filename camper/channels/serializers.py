@@ -11,8 +11,8 @@ class InputChannelSerializer(serializers.ModelSerializer):
 class ValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Value
-        fields = ('id', 'url', 'description', 'channel', 'json_path', 'data', 'date_last_updated')
-        read_only_fields = ('id', 'date_last_updated')
+        fields = ('id', 'url', 'value_type', 'description', 'channel', 'json_path', 'data', 'date_last_updated')
+        read_only_fields = ('date_last_updated',)
 
 
 class NotifySerializer(serializers.Serializer):
@@ -25,7 +25,7 @@ class NotifySerializer(serializers.Serializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
-        fields = ('id', 'url', 'value_id', 'data')
+        fields = ('id', 'url', 'date_created', 'value_id', 'data')
 
     # value_url = serializers.HyperlinkedRelatedField(view_name='value-detail', source='value', read_only=True)
     value_id = serializers.PrimaryKeyRelatedField(source='value', read_only=True)

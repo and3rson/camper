@@ -1,5 +1,6 @@
 dev:
 	docker build -t camper .
+	#docker build -t camper-frontend ./frontend
 	docker-compose up
 
 shell:
@@ -14,3 +15,8 @@ reinit:
 	docker exec -it camper_postgres_1 psql -U camper camper -c "DROP SCHEMA public CASCADE"
 	docker exec -it camper_postgres_1 psql -U camper camper -c "CREATE SCHEMA public"
 	docker exec -it camper_app_1 ./manage.py migrate
+	make loaddata
+
+loaddata:
+	docker exec -it camper_app_1 ./manage.py loaddata general
+

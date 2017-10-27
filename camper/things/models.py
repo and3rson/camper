@@ -9,7 +9,7 @@ class Thing(models.Model):
         ('rotor', 'Rotor'),
     )
 
-    id = models.UUIDField(null=False, blank=False, default=uuid.uuid1, primary_key=True, editable=False)
+    id = models.SlugField(null=False, blank=False, primary_key=True)
     name = models.CharField(max_length=128, null=False, blank=False)
     type = models.CharField(max_length=32, null=False, blank=False, choices=TYPES)
 
