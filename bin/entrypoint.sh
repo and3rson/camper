@@ -9,5 +9,5 @@ while ! nc -z postgres 5432
 done
 
 $MANAGE migrate
-$MANAGE runserver 0.0.0.0:9090
+$MANAGE ${@}
 

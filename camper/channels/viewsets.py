@@ -20,13 +20,13 @@ class InputChannelViewSet(viewsets.ModelViewSet):
         channel = self.get_object()
         serializer = serializers.NotifySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        try:
-            values = channel.notify(serializer.validated_data['data'])
-        except models.ValueUpdateException as e:
-            raise APIException(detail='Value "{}" failed to update, please check json_path of related values. Reason was: "{}"'.format(
-                e.value,
-                e.reason
-            ))
+        # try:
+        values = channel.notify(serializer.validated_data['data'])
+        # except models.ValueUpdateException as e:
+        #     raise APIException(detail='Value "{}" failed to update, please check json_path of related values. Reason was: "{}"'.format(
+        #         e.value,
+        #         e.reason
+        #     ))
         return Response(serializers.ValueSerializer(
             instance=values,
             many=True,
@@ -44,7 +44,10 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         def filter_queryset(self, request, queryset, view):
             since = parse_datetime(request.query_params.get('since', ''))
             if since:
+                print('Filtering since', since)
                 queryset = queryset.filter(date_created__gt=since)
+            else:
+                print('FAIL')
             queryset = queryset[:10]
             return queryset
 

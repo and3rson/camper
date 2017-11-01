@@ -22,7 +22,7 @@ import Divider from 'material-ui/Divider';
 
 import { API } from './api';
 
-const api = new API('http://127.0.0.1:9090');
+const api = new API(window.location.protocol + '//' + window.location.hostname + ':9090');
 window.api = api;
 
 const getHash = () => window.location.hash.replace(/^#/, '');
@@ -43,19 +43,19 @@ class Sidebar extends React.Component {
     }
 
     getStyle(value) {
-        if (value == (getHash() || 'dashboard')) {
+        if (value == (getHash() || 'things')) {
             return {backgroundColor: '#E8E8E8'};
         }
         return {};
     }
 
     render() {
+        // <MenuItem primaryText="Dashboard" value="dashboard" leftIcon={<DashboardIcon />} style={this.getStyle('dashboard')} />
         return (
             <Menu autoWidth={true} onChange={this.onMenuItemChange.bind(this)}>
-                <MenuItem primaryText="Dashboard" value="dashboard" leftIcon={<DashboardIcon />} style={this.getStyle('dashboard')} />
-                <MenuItem primaryText="Channels" value="channels" leftIcon={<ChannelsIcon />} style={this.getStyle('channels')} />
-                <MenuItem primaryText="Values" value="values" leftIcon={<ValuesIcon />} style={this.getStyle('values')} />
                 <MenuItem primaryText="Things" value="things" leftIcon={<ThingsIcon />} style={this.getStyle('things')} />
+                <MenuItem primaryText="Values" value="values" leftIcon={<ValuesIcon />} style={this.getStyle('values')} />
+                <MenuItem primaryText="Channels" value="channels" leftIcon={<ChannelsIcon />} style={this.getStyle('channels')} />
             </Menu>
         );
     }
@@ -204,11 +204,12 @@ class ValuesPage extends React.Component {
                 <Subheader>Values</Subheader>
                 <ListItem disabled={true}>
                     <Row>
-                        <Col xs={1} md={1}>ID</Col>
-                        <Col xs={1} md={1}>Type</Col>
-                        <Col xs={3} md={3}>Description</Col>
+                        <Col xs={2} md={2}>ID</Col>
+                        <Col xs={2} md={2}>Type</Col>
+                        <Col xs={1} md={1}>State</Col>
+                        <Col xs={2} md={2}>Description</Col>
                         <Col xs={2} md={2}>Channel</Col>
-                        <Col xs={3} md={3}>JSON path</Col>
+                        <Col xs={1} md={1}>JSON path</Col>
                         <Col xs={2} md={2}>data</Col>
                     </Row>
                 </ListItem>
@@ -227,19 +228,22 @@ class ValueView extends React.Component {
                 <Divider />
                 <ListItem>
                     <Row>
-                        <Col xs={1} md={1}>
+                        <Col xs={2} md={2}>
                             {this.props.model.id}
                         </Col>
-                        <Col xs={1} md={1}>
+                        <Col xs={2} md={2}>
                             {this.props.model.value_type}
                         </Col>
-                        <Col xs={3} md={3}>
+                        <Col xs={1} md={1}>
+                            {this.props.model.is_alive ? (<span style={{color: '#44AA00'}}>Alive</span>) : (<span style={{color: '#AA0000'}}>Dead</span>)}
+                        </Col>
+                        <Col xs={2} md={2}>
                             {this.props.model.description}
                         </Col>
                         <Col xs={2} md={2}>
                             {this.props.model.channel}
                         </Col>
-                        <Col xs={3} md={3}>
+                        <Col xs={1} md={1}>
                             {this.props.model.json_path}
                         </Col>
                         <Col xs={2} md={2}>
@@ -291,13 +295,23 @@ class ThingView extends React.Component {
         super();
         this.types = {
             temperature: 'thermometer',
-            humidity: 'swimming-pool'
+            humidity: 'swimming-pool',
+            brightness: 'light-bulb'
+        };
+        this.units = {
+            temperature: '\u2103',
+            humidity: '%',
+            brightness: '%'
         };
     }
     render() {
         return (
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader avatar={'http://via.placeholder.com/40x40'} title={this.props.model.name} subtitle={this.props.model.type} />
+                <CardHeader avatar={
+                    this.props.model.is_alive
+                    ? 'https://www.colorcombos.com/images/colors/44AA00.png'
+                    : 'https://www.colorcombos.com/images/colors/AA0000.png'
+                } title={this.props.model.name + (this.props.model.is_alive ? '' : ' (OFFLINE)')} subtitle={this.props.model.type} />
                 {this.props.model.values.map((value, i) => (
                     <CardText key={i}>
                         <Row>
@@ -305,7 +319,7 @@ class ThingView extends React.Component {
                                 <i className={ 'flaticon-' + this.types[value.value_type] }></i>
                             </Col>
                             <Col xs={10}>
-                                <div style={{ fontSize: '32px' }}>{value.data}</div>
+                                <div style={{ fontSize: '32px' }}>{value.data}{this.units[value.value_type]}</div>
                             </Col>
                         </Row>
                     </CardText>
@@ -339,10 +353,10 @@ class App extends React.Component {
                     <Header />
                     <Container fluid={true}>
                         <Row>
-                            <Col xs={3}>
+                            <Col xs={12} md={3}>
                                 <Sidebar onMenuItemChange={this.loadPage.bind(this)} />
                             </Col>
-                            <Col xs={9}>
+                            <Col xs={12} md={9}>
                                 {this.pageMap[this.state.page]}
                             </Col>
                         </Row>

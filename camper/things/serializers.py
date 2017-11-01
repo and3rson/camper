@@ -7,8 +7,8 @@ from camper.channels.models import Value
 class ThingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Thing
-        fields = ('id', 'url', 'name', 'type', 'values_ids', 'values')  # , 'output_channels')
-        read_only_fields = ('values',)
+        fields = ('id', 'url', 'name', 'type', 'is_alive', 'values_ids', 'values')  # , 'output_channels')
+        read_only_fields = ('values', 'is_alive')
 
     # input_channels = InputChannelSerializer(many=True)
     # output_channels = OutputChannelSerializer(many=True)

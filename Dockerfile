@@ -23,8 +23,5 @@ COPY ./manage.py /root/camper
 COPY ./camper /root/camper/camper
 COPY ./bin /root/camper/bin
 
-RUN pwd
-RUN ls -l
-
 EXPOSE 9090
 

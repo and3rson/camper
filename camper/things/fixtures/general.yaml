@@ -1,9 +1,25 @@
 - model: things.Thing
   pk: dht11
   fields:
-    name: Kitchen sensor
+    name: Kitchen climate
     type: sensor
     values:
         - dht11-temp
         - dht11-humid
+
+#- model: things.Thing
+#  pk: dht11-outside
+#  fields:
+#    name: Outside climate
+#    type: sensor
+#    values:
+#        - dht11-temp-outside
+
+- model: things.Thing
+  pk: ky018
+  fields:
+    name: Light sensor
+    type: sensor
+    values:
+        - ky018-bright
 

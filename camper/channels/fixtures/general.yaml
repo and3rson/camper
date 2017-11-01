@@ -1,5 +1,5 @@
 - model: channels.InputChannel
-  pk: dht11
+  pk: esp-kitchen
   fields:
       description: Kitchen sensor channel
 
@@ -7,7 +7,7 @@
   pk: dht11-temp
   fields:
       description: Temperature value
-      channel: dht11
+      channel: esp-kitchen
       json_path: '$.temperature'
       value_type: 'temperature'
       data: 27
@@ -16,8 +16,26 @@
   pk: dht11-humid
   fields:
       description: Humidity value
-      channel: dht11
+      channel: esp-kitchen
       json_path: '$.humidity'
       value_type: 'humidity'
       data: 70
+
+- model: channels.Value
+  pk: ky018-bright
+  fields:
+      description: Brightness in room
+      channel: esp-kitchen
+      json_path: '$.brightness'
+      value_type: 'brightness'
+      data: 50
+
+#- model: channels.Value
+#  pk: dht11-temp-outside
+#  fields:
+#      description: Temperature outside value
+#      channel: esp-kitchen
+#      json_path: '$.temperature_outside'
+#      value_type: 'temperature'
+#      data: 27
 

@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 
@@ -149,7 +149,8 @@ REST_FRAMEWORK = {
 # CORS
 
 CORS_ORIGIN_REGEX_WHITELIST = [
-    r'http(s?):\/\/(127\.0\.0\.1|172\.[\d]+\.[\d]+\.[\d]+|localhost|::1):(9090|9091)'
+    # r'http(s?):\/\/(127\.0\.0\.1|172\.[\d]+\.[\d]+\.[\d]+|localhost|::1):(9090|9091)'
+    r'.*'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
