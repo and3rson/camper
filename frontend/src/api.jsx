@@ -69,40 +69,44 @@ export class API extends EventEmitter {
             url: '/api/events/?since=' + encodeURIComponent(this.data.lastEvent ? this.data.lastEvent.date_created : '')
         }).then(events => {
             if (this.data.isEventsInitialized) {
-                let changedValues = [];
-                let changedThings = [];
-                events.forEach(event => {
-                    if (event.type == 'thing-value-changed') {
-                        this.data.values.filter(value => value.id == event.object_id).forEach(value => {
-                            value.date_last_updated = event.date_created;
-                            value.data = event.data;
-                            changedValues.push(value);
-                            this.data.things.forEach(thing => {
-                                thing.values.forEach(thingValue => {
-                                    if (thingValue.id == value.id) {
-                                        thingValue.date_last_updated = event.date_created;
-                                        thingValue.data = event.data;
-                                        changedThings.push(thing);
-                                    }
-                                });
-                            });
-                        });
-                    } else if (event.type == 'thing-alive-state-changed') {
-                        this.data.things.filter(thing => thing.id == event.object_id).forEach(thing => {
-                            thing.is_alive = event.data;
-                            changedThings.push(thing);
-                        });
-                    } else {
-                        console.error('Received unknown event from server:', event);
-                    }
-                });
-                if (changedValues.length) {
-                    console.log('changedValues:', changedValues);
-                    this.emit('values:change', this.data.values);
-                }
-                if (changedThings.length) {
-                    console.log('changedThings:', changedThings);
-                    this.emit('things:change', this.data.things);
+                //let changedValues = [];
+                //let changedThings = [];
+                //events.forEach(event => {
+                //    if (event.type == 'thing-value-changed') {
+                //        this.data.values.filter(value => value.id == event.object_id).forEach(value => {
+                //            value.date_last_updated = event.date_created;
+                //            value.data = event.data;
+                //            changedValues.push(value);
+                //            this.data.things.forEach(thing => {
+                //                thing.values.forEach(thingValue => {
+                //                    if (thingValue.id == value.id) {
+                //                        thingValue.date_last_updated = event.date_created;
+                //                        thingValue.data = event.data;
+                //                        changedThings.push(thing);
+                //                    }
+                //                });
+                //            });
+                //        });
+                //    } else if (event.type == 'thing-alive-state-changed') {
+                //        this.data.things.filter(thing => thing.id == event.object_id).forEach(thing => {
+                //            thing.is_alive = event.data;
+                //            changedThings.push(thing);
+                //        });
+                //    } else {
+                //        console.error('Received unknown event from server:', event);
+                //    }
+                //});
+                //if (changedValues.length) {
+                //    console.log('changedValues:', changedValues);
+                //    this.emit('values:change', this.data.values);
+                //}
+                //if (changedThings.length) {
+                //    console.log('changedThings:', changedThings);
+                //    this.emit('things:change', this.data.things);
+                //}
+                if (events.length) {
+                    this.updateThings();
+                    this.updateValues();
                 }
             }
             if (events.length) {

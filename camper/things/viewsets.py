@@ -5,5 +5,5 @@ from . import serializers
 
 class ThingViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ThingSerializer
-    queryset = models.Thing.objects.prefetch_related('values')
+    queryset = models.Thing.objects.prefetch_related('input_channels', 'values')
 

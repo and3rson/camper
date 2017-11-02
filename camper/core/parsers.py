@@ -1,5 +1,6 @@
 from rest_framework import parsers
 from rest_framework.exceptions import ValidationError
+from json import loads
 
 
 class DataQueryParser(parsers.BaseParser):
@@ -11,12 +12,9 @@ class DataQueryParser(parsers.BaseParser):
         data = dict()
         for key, _, value in [pair.partition('=') for pair in raw.split('&')]:
             try:
-                if float(value) == int(value):
-                    value = int(value)
-                else:
-                    value = float(value)
+                value = loads(value)
             except:
-                pass
+                raise ValidationError(detail='Malformed data structure in payload: non-JSON-ish value format.')
             node = data
             path = key.split('.')
             try:

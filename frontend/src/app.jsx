@@ -272,6 +272,7 @@ class ThingsPage extends React.Component {
         api.removeListener('things:change', this.updateThings);
     }
     updateThings(things) {
+        console.log('Things changed');
         this.setState({things: things});
     }
     render() {
@@ -303,32 +304,60 @@ class ThingView extends React.Component {
             humidity: '%',
             brightness: '%'
         };
+        this.state = {
+            //lastUpdated: this.props.model.date_last_updated
+            timePassed: 0
+        };
     }
+
+    componentDidMount() {
+        this.interval = window.setInterval(function() {
+            this.setState({timePassed: this.state.timePassed + 1});
+        }.bind(this), 1000);
+    }
+
+    componentWillUnmount() {
+        window.clearInterval(this.interval);
+    }
+
     render() {
+        //<CardActions>
+        //    <FlatButton label="Reset" />
+        //</CardActions>
+        //avatar={
+        //    this.props.model.is_alive
+        //    ? 'https://www.colorcombos.com/images/colors/44AA00.png'
+        //    : 'https://www.colorcombos.com/images/colors/AA0000.png'
+        //}
         return (
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader avatar={
-                    this.props.model.is_alive
-                    ? 'https://www.colorcombos.com/images/colors/44AA00.png'
-                    : 'https://www.colorcombos.com/images/colors/AA0000.png'
-                } title={this.props.model.name + (this.props.model.is_alive ? '' : ' (OFFLINE)')} subtitle={this.props.model.type} />
+                <CardHeader
+                    title={this.props.model.name} subtitle={this.props.model.type} />
                 {this.props.model.values.map((value, i) => (
                     <CardText key={i}>
-                        <Row>
-                            <Col xs={2}>
-                                <i className={ 'flaticon-' + this.types[value.value_type] }></i>
-                            </Col>
-                            <Col xs={10}>
-                                <div style={{ fontSize: '32px' }}>{value.data}{this.units[value.value_type]}</div>
-                            </Col>
-                        </Row>
+                        <div style={{display: 'flex', flexDirection: 'columns', color: value.is_alive ? '#44AA00' : '#AA0000'}}>
+                            <i className={ 'flaticon-' + this.types[value.value_type] } style={{width: '48px', textAlign: 'center'}}></i>
+                            <div style={{ fontSize: '24px', flex: 1 }}>{value.data}{this.units[value.value_type]}</div>
+                            <div style={{ fontSize: '14px', lineHeight: '24px', textAlign: 'right' }}>{this.formatDelta(this.getSecondsSinceLastUpdate(value))}</div>
+                        </div>
                     </CardText>
                 ))}
-                <CardActions>
-                    <FlatButton label="Reset" />
-                </CardActions>
             </Card>
         );
+    }
+
+    getSecondsSinceLastUpdate(value) {
+        return parseInt((new Date() - new Date(value.date_last_updated)) / 1000);
+    }
+
+    formatDelta(delta) {
+        if (delta < 60) {
+            return `${parseInt(delta)}s ago`;
+        } else if (delta < 3600) {
+            return `${parseInt(delta / 60)}m ${parseInt(delta % 60)}s ago`;
+        } else {
+            return `> ${parseInt(delta / 3600)}h ago`;
+        }
     }
 }
 

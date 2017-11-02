@@ -8,6 +8,7 @@ while ! nc -z postgres 5432
     echo 'Waiting for PostgreSQL'
 done
 
+#psql -U camper -h postgres -c ""
 $MANAGE migrate
 $MANAGE ${@}
 

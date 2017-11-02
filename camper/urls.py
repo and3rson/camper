@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from camper.channels.viewsets import InputChannelViewSet, ValueViewSet, EventViewSet
+from camper.channels.viewsets import InputChannelViewSet
+from camper.values.viewsets import ValueViewSet
+from camper.events.viewsets import EventViewSet
 from camper.things.viewsets import ThingViewSet
 from rest_framework_swagger.views import get_swagger_view
 from rest_framework.routers import DefaultRouter

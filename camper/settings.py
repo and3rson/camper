@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'camper.core',
     'camper.things',
     'camper.channels',
+    'camper.values',
+    'camper.events',
 ]
 
 MIDDLEWARE = [
