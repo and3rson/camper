@@ -34,7 +34,18 @@ export class API extends EventEmitter {
         if (data) {
             opts.data = JSON.stringify(data);
         }
-        return fetch(this.apiRoot + '/' + url.replace(/^\//, ''), opts).then(response => response.json());
+        if (localStorage.camperUsername && localStorage.camperPassword) {
+            opts.headers['Authorization'] = `Plain ${localStorage.camperUsername}:${localStorage.camperPassword}`;
+        }
+        return fetch(this.apiRoot + '/' + url.replace(/^\//, ''), opts).then(response => {
+            if (response.status < 200 || response.status > 299) {
+                throw new Error(`API error ${response.status}`);
+            }
+            return response.json();
+        });
+        //.catch(e => {
+        //    console.error('API error:', e);
+        //});
     }
 
     updateChannels() {

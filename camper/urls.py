@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from camper.core.viewsets import StatsView
 from camper.channels.viewsets import InputChannelViewSet
 from camper.values.viewsets import ValueViewSet
 from camper.events.viewsets import EventViewSet
@@ -30,6 +31,7 @@ router.register('channels', InputChannelViewSet, base_name='inputchannel')
 router.register('values', ValueViewSet, base_name='value')
 router.register('events', EventViewSet, base_name='event')
 router.register('things', ThingViewSet, base_name='thing')
+router.register('stats', StatsView, base_name='stats')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

@@ -7,7 +7,12 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         print('Worker started')
         while True:
-            for value in Value.objects.all():
-                value.check_alive_state()
+            try:
+                values = list(Value.objects.all())
+            except:
+                print('DB not ready yet')
+            else:
+                for value in values:
+                    value.check_alive_state()
             sleep(1)
 

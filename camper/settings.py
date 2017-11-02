@@ -146,6 +146,11 @@ REST_FRAMEWORK = {
         # 'camper.core.parsers.DataQueryParser',
         'rest_framework_yaml.parsers.YAMLParser',
     ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        'camper.core.auth.PlainAuthentication',
+    )
 }
 
 # CORS

@@ -1,5 +1,6 @@
 - model: channels.InputChannel
   pk: esp-kitchen
   fields:
-      description: Kitchen sensor channel
+    owner: 1
+    description: Kitchen sensor channel
 

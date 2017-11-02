@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import AppBar from 'material-ui/AppBar';
+import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
 import { Card, CardHeader, CardTitle, CardText, CardMedia, CardActions } from 'material-ui/Card';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { Container, Row, Col } from 'react-grid-system';
+import { Container, Row, Col, Hidden } from 'react-grid-system';
 import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
 //import SvgIcon, WbSunny from 'material-ui/SvgIcon';
 import ImageWbSunny from 'material-ui/svg-icons/image/wb-sunny.js';
 import DashboardIcon from 'material-ui/svg-icons/action/dashboard.js';
@@ -14,6 +17,7 @@ import ChannelsIcon from 'material-ui/svg-icons/communication/call-split.js';
 //import ChannelsIcon from 'material-ui/svg-icons/action/settings-input-component.js';
 import ValuesIcon from 'material-ui/svg-icons/editor/insert-drive-file.js';
 import ThingsIcon from 'material-ui/svg-icons/device/nfc.js';
+import SettingsIcon from 'material-ui/svg-icons/action/settings.js';
 import { yellow500 } from 'material-ui/styles/colors';
 //import { Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
 import { List, ListItem } from 'material-ui/List';
@@ -56,7 +60,69 @@ class Sidebar extends React.Component {
                 <MenuItem primaryText="Things" value="things" leftIcon={<ThingsIcon />} style={this.getStyle('things')} />
                 <MenuItem primaryText="Values" value="values" leftIcon={<ValuesIcon />} style={this.getStyle('values')} />
                 <MenuItem primaryText="Channels" value="channels" leftIcon={<ChannelsIcon />} style={this.getStyle('channels')} />
+                <MenuItem primaryText="Settings" value="settings" leftIcon={<SettingsIcon />} style={this.getStyle('settings')} />
             </Menu>
+        );
+    }
+
+    onMenuItemChange(e, value) {
+        window.location.hash = value;
+        this.props.onMenuItemChange(e, value);
+    }
+}
+
+class BottomBar extends React.Component {
+    constructor() {
+        super();
+
+        this.onMenuItemChange = this.onMenuItemChange.bind(this);
+
+        window.addEventListener('hashchange', (e) => {
+            this.onMenuItemChange(e, getHash());
+        });
+    }
+
+    getSelectedIndex() {
+        switch (getHash()) {
+            case 'things':
+                return 0
+            case 'values':
+                return 1
+            case 'channels':
+                return 2
+            case 'settings':
+                return 3
+            default:
+                return 0
+        }
+    }
+
+    render() {
+        return (
+            <Paper zDepth={1}>
+                <BottomNavigation selectedIndex={this.getSelectedIndex()}>
+                    <BottomNavigationItem
+                        label="Things"
+                        icon={<ThingsIcon />}
+                        onClick={() => this.onMenuItemChange(null, 'things')}
+                    />
+                    <BottomNavigationItem
+                        label="Values"
+                        icon={<ValuesIcon />}
+                        onClick={() => this.onMenuItemChange(null, 'values')}
+                    />
+                    <BottomNavigationItem
+                        label="Channels"
+                        icon={<ChannelsIcon />}
+                        onClick={() => this.onMenuItemChange(null, 'channels')}
+                    />
+                    <BottomNavigationItem
+                        label="Settings"
+                        icon={<SettingsIcon />}
+                        onClick={() => this.onMenuItemChange(null, 'settings')}
+                    />
+                </BottomNavigation>
+            </Paper>
         );
     }
 
@@ -145,7 +211,6 @@ class ChannelsPage extends React.Component {
     render() {
         return (
             <List>
-                <Subheader>Channels</Subheader>
                 <ListItem disabled={true}>
                     <Row>
                         <Col xs={4} md={3}>ID</Col>
@@ -201,7 +266,6 @@ class ValuesPage extends React.Component {
     render() {
         return (
             <List>
-                <Subheader>Values</Subheader>
                 <ListItem disabled={true}>
                     <Row>
                         <Col xs={2} md={2}>ID</Col>
@@ -278,7 +342,6 @@ class ThingsPage extends React.Component {
     render() {
         return (
             <div>
-                <Subheader>Things</Subheader>
                 <Row>
                     {this.state.things.map((thing, i) => (
                         <Col xs={12} md={6} lg={4} key={i}>
@@ -335,7 +398,7 @@ class ThingView extends React.Component {
                     title={this.props.model.name} subtitle={this.props.model.type} />
                 {this.props.model.values.map((value, i) => (
                     <CardText key={i}>
-                        <div style={{display: 'flex', flexDirection: 'columns', color: value.is_alive ? '#44AA00' : '#AA0000'}}>
+                        <div style={{display: 'flex', flexDirection: 'row', color: value.is_alive ? '#44AA00' : '#AA0000'}}>
                             <i className={ 'flaticon-' + this.types[value.value_type] } style={{width: '48px', textAlign: 'center'}}></i>
                             <div style={{ fontSize: '24px', flex: 1 }}>{value.data}{this.units[value.value_type]}</div>
                             <div style={{ fontSize: '14px', lineHeight: '24px', textAlign: 'right' }}>{this.formatDelta(this.getSecondsSinceLastUpdate(value))}</div>
@@ -361,6 +424,47 @@ class ThingView extends React.Component {
     }
 }
 
+class SettingsPage extends React.Component {
+    constructor() {
+        super();
+
+        this.data = {
+            username: window.localStorage.camperUsername,
+            password: window.localStorage.camperPassword
+        };
+    }
+    render() {
+        return (
+            <Row>
+                <Col xs={12}>
+                    <TextField
+                        hintText="Username"
+                        onChange={(e, value) => { this.data.username = value; }}
+                        defaultValue={this.data.username}
+                    />
+                </Col>
+                <Col xs={12}>
+                    <TextField
+                        hintText="Password"
+                        type="password"
+                        onChange={(e, value) => { this.data.password = value; }}
+                        defaultValue={this.data.password}
+                    />
+                </Col>
+                <Col xs={12}>
+                    <FlatButton label="Save" onClick={this.save.bind(this)} />
+                </Col>
+            </Row>
+        );
+    }
+    save() {
+        window.localStorage.camperUsername = this.data.username;
+        window.localStorage.camperPassword = this.data.password;
+        window.location = '#things';
+        window.location.reload();
+    }
+}
+
 class App extends React.Component {
     constructor() {
         super();
@@ -368,28 +472,34 @@ class App extends React.Component {
             page: getHash() || 'things'
         };
         this.pageMap = {
-            'dashboard': <DashboardPage />,
+            //'dashboard': <DashboardPage />,
             'channels': <ChannelsPage />,
             'values': <ValuesPage />,
-            'things': <ThingsPage />
+            'things': <ThingsPage />,
+            'settings': <SettingsPage />
         };
     }
 
     render() {
         return (
             <MuiThemeProvider>
-                <div>
+                <div style={{height: '100vh', display: 'flex', flexDirection: 'column'}}>
                     <Header />
-                    <Container fluid={true}>
+                    <Container fluid={true} style={{flex: 1, width: '100%'}}>
                         <Row>
-                            <Col xs={12} md={3}>
-                                <Sidebar onMenuItemChange={this.loadPage.bind(this)} />
-                            </Col>
+                            <Hidden xs sm>
+                                <Col xs={0} md={3}>
+                                    <Sidebar onMenuItemChange={this.loadPage.bind(this)} />
+                                </Col>
+                            </Hidden>
                             <Col xs={12} md={9}>
                                 {this.pageMap[this.state.page]}
                             </Col>
                         </Row>
                     </Container>
+                    <Hidden md lg>
+                        <BottomBar onMenuItemChange={this.loadPage.bind(this)} />
+                    </Hidden>
                 </div>
             </MuiThemeProvider>
         );

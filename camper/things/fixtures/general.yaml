@@ -1,6 +1,7 @@
 - model: things.Thing
   pk: dht11
   fields:
+    owner: 1
     name: Kitchen climate
     type: sensor
     input_channels:
@@ -17,6 +18,7 @@
 - model: things.Thing
   pk: ky018
   fields:
+    owner: 1
     name: Light sensor
     type: sensor
     input_channels:
