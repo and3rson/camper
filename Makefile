@@ -2,7 +2,7 @@ ECS_URL = 193635214029.dkr.ecr.eu-central-1.amazonaws.com/dunai
 
 dev:
 	docker build -t camper .
-	docker build -t camper-frontend ./frontend
+	#docker build -t camper-frontend ./frontend
 	docker-compose -f ops/dev/docker-compose.yml -p camper up app worker postgres
 
 frontend-dev:
@@ -31,6 +31,8 @@ loaddata:
 
 upload:
 	aws-login-archer
+	docker build -t camper .
+	docker build -t camper-frontend ./frontend
 	docker tag camper ${ECS_URL}:camper
 	docker tag camper-frontend ${ECS_URL}:camper-frontend
 	docker push ${ECS_URL}:camper

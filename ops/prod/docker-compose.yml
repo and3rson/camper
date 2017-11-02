@@ -5,7 +5,7 @@ services:
         environment:
             DJANGO_SETTINGS_MODULE: camper.settings
             PYTHONUNBUFFERED: 0
-        command: ./bin/entrypoint.sh runserver 0.0.0.0:9090
+        command: ./bin/entrypoint.sh server
         links:
             - postgres
         ports:
