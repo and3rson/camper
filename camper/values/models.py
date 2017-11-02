@@ -20,6 +20,7 @@ class Value(EventEmitter, models.Model):
     )
 
     id = models.SlugField(null=False, blank=False, primary_key=True, editable=True)
+    owner = models.ForeignKey('auth.User', null=False, blank=False)
     value_type = models.CharField(max_length=32, null=False, blank=False, choices=VALUE_TYPES)
     description = models.TextField(null=True, blank=True)
     thing = models.ForeignKey('things.Thing', null=False, blank=False, related_name='values')

@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated
 from . import models
 from . import serializers
 from camper.core.parsers import DataQueryParser
@@ -9,7 +10,7 @@ from camper.core.parsers import DataQueryParser
 
 class InputChannelViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.InputChannelSerializer
-    queryset = models.InputChannel.objects.all()
+    permission_classes = [IsAuthenticated]
 
     @detail_route(
         methods=['POST'],
@@ -27,6 +28,12 @@ class InputChannelViewSet(viewsets.ModelViewSet):
         #     many=True,
         #     context=dict(request=request)
         # ).data)
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        return models.InputChannel.objects.all().filter(owner=self.request.user)
 
 
 # class OutputChannelViewSet(viewsets.ModelViewSet):

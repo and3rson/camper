@@ -10,6 +10,7 @@ class Thing(models.Model):
     )
 
     id = models.SlugField(null=False, blank=False, primary_key=True)
+    owner = models.ForeignKey('auth.User', null=False, blank=False)
     name = models.CharField(max_length=128, null=False, blank=False)
     type = models.CharField(max_length=32, null=False, blank=False, choices=TYPES)
 

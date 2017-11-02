@@ -13,6 +13,7 @@ class Event(models.Model):
     )
 
     id = models.UUIDField(null=False, blank=False, default=uuid.uuid1, primary_key=True, editable=False)
+    owner = models.ForeignKey('auth.User', null=False, blank=False)
     type = models.CharField(max_length=32, null=False, blank=False, choices=TYPES)
     date_created = models.DateTimeField(null=False, blank=False, default=now)
     object_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)

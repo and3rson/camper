@@ -1,5 +1,6 @@
 from rest_framework.filters import BaseFilterBackend
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from django.utils.dateparse import parse_datetime
 from coreapi import Field
 from . import models
@@ -29,6 +30,9 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
             ]
 
     serializer_class = serializers.EventSerializer
-    queryset = models.Event.objects.order_by('-date_created')
     filter_backends = [DateFilterBackend]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return models.Event.objects.order_by('-date_created').filter(owner=self.request.user)
 

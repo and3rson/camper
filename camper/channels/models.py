@@ -6,6 +6,7 @@ class Channel(models.Model):
         abstract = True
 
     id = models.SlugField(null=False, blank=False, primary_key=True)
+    owner = models.ForeignKey('auth.User', null=False, blank=False)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
