@@ -20,6 +20,11 @@ from camper.channels.viewsets import InputChannelViewSet
 from camper.values.viewsets import ValueViewSet
 from camper.events.viewsets import EventViewSet
 from camper.things.viewsets import ThingViewSet
+from camper.controls.viewsets import (
+    ControlViewSet,
+    SwitchControlViewSet,
+    RangeControlViewSet
+)
 from rest_framework_swagger.views import get_swagger_view
 from rest_framework.routers import DefaultRouter
 
@@ -32,6 +37,9 @@ router.register('values', ValueViewSet, base_name='value')
 router.register('events', EventViewSet, base_name='event')
 router.register('things', ThingViewSet, base_name='thing')
 router.register('stats', StatsView, base_name='stats')
+router.register('controls/switches', SwitchControlViewSet, base_name='switchcontrol')
+router.register('controls/ranges', RangeControlViewSet, base_name='rangecontrol')
+router.register('controls', ControlViewSet, base_name='control')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

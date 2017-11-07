@@ -30,7 +30,7 @@ class InputChannelViewSet(viewsets.ModelViewSet):
         # ).data)
 
     def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
+        return serializer.save(owner=self.request.user)
 
     def get_queryset(self):
         return models.InputChannel.objects.all().filter(owner=self.request.user)

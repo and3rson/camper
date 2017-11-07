@@ -8,6 +8,7 @@ coreschema==0.0.4
 Django==1.11.6
 django-cors-headers==2.1.0
 django-grappelli==2.10.1
+-e git+https://github.com/hanleyhansen/django-model-utils.git#egg=django-model-utils
 django-rest-swagger==2.1.2
 djangorestframework==3.7.1
 djangorestframework-yaml==1.0.3

@@ -3,12 +3,13 @@ from . import models
 from camper.channels.models import InputChannel
 from camper.values.serializers import ValueSerializer  # , OutputChannelSerializer
 from camper.values.models import Value
+from camper.controls.serializers import ControlSerializer
 
 
 class ThingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Thing
-        fields = ('id', 'url', 'name', 'type', 'input_channels_ids', 'values')  # , 'output_channels')
+        fields = ('id', 'url', 'name', 'type', 'input_channels_ids', 'values', 'controls')  # , 'output_channels')
         read_only_fields = ('values',)
 
     # input_channels = InputChannelSerializer(many=True)
@@ -17,4 +18,5 @@ class ThingSerializer(serializers.ModelSerializer):
     # values_ids = serializers.PrimaryKeyRelatedField(many=True, queryset=Value.objects.all(), source='values')
     # values = serializers.(many=True, queryset=Value.objects.all())
     values = ValueSerializer(many=True, read_only=True)
+    controls = ControlSerializer(many=True, read_only=True)
 

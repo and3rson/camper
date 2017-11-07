@@ -14,7 +14,7 @@ class ValueViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
+        return serializer.save(owner=self.request.user)
 
     def get_queryset(self):
         return models.Value.objects.all().filter(owner=self.request.user)
@@ -35,6 +35,10 @@ class ValueViewSet(viewsets.ModelViewSet):
         value = self.get_object()
         resolution = request.query_params.get('resolution', 'hours')
         count = request.query_params.get('count', 12)
+        try:
+            count = int(count)
+        except:
+            count = 12
         samples = []
         max_avg = None
 

@@ -18,7 +18,7 @@ bash:
 	docker exec -it camper_app_1 bash
 
 reinit:
-	rm camper/channels/migrations/000*.py camper/things/migrations/000*.py camper/events/migrations/000*.py camper/values/migrations/000*.py -f
+	rm camper/channels/migrations/000*.py camper/things/migrations/000*.py camper/events/migrations/000*.py camper/values/migrations/000*.py camper/controls/migrations/000*.py -f
 	docker exec -it camper_app_1 ./manage.py makemigrations
 	docker exec -it camper_postgres_1 psql -U camper camper -c "DROP SCHEMA public CASCADE"
 	docker exec -it camper_postgres_1 psql -U camper camper -c "CREATE SCHEMA public"

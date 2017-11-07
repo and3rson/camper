@@ -1,0 +1,25 @@
+- model: controls.Control
+  pk: bedroom-light
+  fields:
+      name: Bedroom light
+      owner: 1
+      thing: bedroom-esp
+- model: controls.SwitchControl
+  pk: bedroom-light
+  fields:
+      is_enabled: false
+- model: controls.Control
+  pk: bedroom-curtains
+  fields:
+      name: Bedroom curtains
+      owner: 1
+      thing: bedroom-esp
+- model: controls.RangeControl
+  pk: bedroom-curtains
+  fields:
+      min_value: 0
+      max_value: 100
+      default_value: 50
+      step: 10
+      is_float: false
+

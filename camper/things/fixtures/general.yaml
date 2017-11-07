@@ -16,6 +16,13 @@
 #        - dht11-temp-outside
 
 - model: things.Thing
+  pk: bedroom-esp
+  fields:
+      owner: 1
+      name: Bedroom
+      type: switch
+
+- model: things.Thing
   pk: ky018
   fields:
     owner: 1

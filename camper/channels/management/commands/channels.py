@@ -89,6 +89,12 @@ class Server(object):
         for client in self.clients.values():
             yield client
 
+    def broadcast(self, username, command, data):
+        for client in self.iter_clients():
+            if client.check_username(username):
+                client.send('{} {}\r\n'.format(command, data).encode('UTF-8'))
+
+
 class Client(object):
     def __init__(self, conn):
         self.conn = conn
@@ -97,6 +103,12 @@ class Client(object):
     @property
     def is_authorized(self):
         return self.user is not None
+
+    def check_username(self, username):
+        return self.is_authorized and self.user.username == username
+
+    def send(self, data):
+        self.conn.send(data)
 
 
 class EventListener(Thread):
@@ -112,7 +124,5 @@ class EventListener(Thread):
             if event['type'] == 'message':
                 print('Got event', event)
                 data = json.loads(event['data'])
-                for client in self.server.iter_clients():
-                    if client.is_authorized and client.user.username == data['username']:
-                        client.conn.send(b'DATA ' + data['payload'].encode('utf-8') + b'\r\n')
+                self.server.broadcast(data['username'], 'DATA', data['channel'] + ' ' + data['data'])
 
