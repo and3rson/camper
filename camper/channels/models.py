@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+from redis import StrictRedis
 
 
 class Channel(models.Model):
@@ -31,14 +33,5 @@ class OutputChannel(Channel):
     destination_url = models.URLField(null=False, blank=False)
 
 
-# class Transformer(models.Model):
-#     TEMPLATE_HEADER = '{% load core %}\n'
-
-#     id = models.UUIDField(null=False, blank=False, default=uuid.uuid1, primary_key=True, editable=False)
-#     script = models.TextField(null=False, blank=False, default='{{ data|json }}')
-
-#     def feed(self, data):
-#         template = Template(Transformer.TEMPLATE_HEADER + self.script)
-#         transformed = template.render(Context(dict(data=data)))
-#         return json.loads(transformed)
+redis = StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 

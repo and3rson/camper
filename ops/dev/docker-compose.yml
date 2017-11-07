@@ -22,19 +22,33 @@ services:
             - ../../camper:/root/camper/camper
         links:
             - postgres
-    frontend:
-        image: camper-frontend
-        command: npm run dev
-        ports:
-            - 9091:9091
+    channels:
+        image: camper
+        environment:
+            DJANGO_SETTINGS_MODULE: camper.settings
+            PYTHONUNBUFFERED: 0
+        command: ./bin/entrypoint.sh channels
         volumes:
-            - ../../frontend/src:/root/camper/src
+            - ../../camper:/root/camper/camper
         links:
-            - app
+            - postgres
+        ports:
+            - 9080:9080
+    #frontend:
+    #    image: camper-frontend
+    #    command: npm run dev
+    #    ports:
+    #        - 9091:9091
+    #    volumes:
+    #        - ../../frontend/src:/root/camper/src
+    #    links:
+    #        - app
     postgres:
         image: postgres:9
         environment:
             POSTGRES_USER: camper
             POSTGRES_PASSWORD: camper
             POSTGRES_DB: camper
+    redis:
+        image: redis
 

@@ -2,12 +2,11 @@ ECS_URL = 193635214029.dkr.ecr.eu-central-1.amazonaws.com/dunai
 
 dev:
 	docker build -t camper .
-	#docker build -t camper-frontend ./frontend
-	docker-compose -f ops/dev/docker-compose.yml -p camper up app worker postgres
+	docker-compose -f ops/dev/docker-compose.yml -p camper up
 
-frontend-dev:
-	docker build -t camper-frontend ./frontend
-	docker-compose -f ops/dev/docker-compose.yml -p camper up frontend
+#frontend-dev:
+#    docker build -t camper-frontend ./frontend
+#    docker-compose -f ops/dev/docker-compose.yml -p camper up frontend
 
 run:
 	docker-compose -f ops/prod/docker-compose -p camper up -d

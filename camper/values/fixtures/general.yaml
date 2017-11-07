@@ -7,6 +7,7 @@
     json_path: '$.temperature'
     value_type: 'temperature'
     data: 27
+    ttl_seconds: 360
 
 - model: values.Value
   pk: dht11-humid
@@ -17,6 +18,7 @@
     json_path: '$.humidity'
     value_type: 'humidity'
     data: 70
+    ttl_seconds: 360
 
 - model: values.Value
   pk: ky018-bright
@@ -27,6 +29,7 @@
     json_path: '$.brightness'
     value_type: 'brightness'
     data: 50
+    ttl_seconds: 360
 
 #- model: channels.Value
 #  pk: dht11-temp-outside

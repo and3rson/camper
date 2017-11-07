@@ -23,3 +23,11 @@ class ValueSerializer(serializers.ModelSerializer):
 
     # data = serializers.JSONField()
 
+
+class ValueLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ValueLog
+        fields = (
+            'id', 'value', 'data', 'date_created'
+        )
+

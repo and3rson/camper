@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.utils.timezone import now
@@ -46,11 +47,13 @@ class Value(EventEmitter, models.Model):
                 last_error=self.last_error
             )
             # self.emit('value:change', last_error=self.last_error)
+            success = False
         else:
             self.data = data
             event_data = dict(
                 data=data
             )
+            success = True
             # self.emit('value:change', data=data)
         self.date_last_updated = now()
         if self.last_alive_state == False:
@@ -58,6 +61,12 @@ class Value(EventEmitter, models.Model):
             event_data['is_alive'] = True
         self.emit('value:change', **event_data)
         self.save()
+        if success:
+            ValueLog.objects.create(
+                owner=self.owner,
+                value=self,
+                data=self.data
+            )
 
     @property
     def is_alive(self):
@@ -77,4 +86,12 @@ class Value(EventEmitter, models.Model):
         )
 
     __repr__ = __str__
+
+
+class ValueLog(models.Model):
+    id = models.UUIDField(null=False, blank=False, default=uuid.uuid1, primary_key=True, editable=False)
+    owner = models.ForeignKey('auth.User', null=False, blank=False)
+    value = models.ForeignKey('Value', null=False, blank=False, related_name='logs')
+    data = JSONField(null=False, blank=False)
+    date_created = models.DateTimeField(null=True, blank=True, default=now)
 

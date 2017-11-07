@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'camper.channels',
     'camper.values',
     'camper.events',
+    'camper.controls',
 ]
 
 MIDDLEWARE = [
@@ -161,4 +162,9 @@ CORS_ORIGIN_REGEX_WHITELIST = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# Redis
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+REDIS_DB = 0
 

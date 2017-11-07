@@ -1,4 +1,4 @@
-var EventEmitter = require('events').EventEmitter;
+const EventEmitter = require('events').EventEmitter;
 
 export class API extends EventEmitter {
     constructor(apiRoot) {
