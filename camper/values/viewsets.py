@@ -4,7 +4,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.utils.timezone import now
-from django.db.models import Avg, Prefetch
+from django.db.models import Prefetch
 from datetime import timedelta
 from . import models
 from . import serializers

@@ -8,7 +8,7 @@ from camper.events.mixins import EventEmitter
 
 class Value(EventEmitter, models.Model):
     # class Meta:
-    #     unique_together = ('id', 'thing')
+    #     unique_together = ('id', 'device')
 
     VALUE_TYPES = (
         ('temperature', 'Temperature'),
@@ -23,10 +23,9 @@ class Value(EventEmitter, models.Model):
 
     id = models.SlugField(null=False, blank=False, primary_key=True, editable=True)
     owner = models.ForeignKey('auth.User', null=False, blank=False)
+    name = models.CharField(max_length=128, null=False, blank=False)
     value_type = models.CharField(max_length=32, null=False, blank=False, choices=VALUE_TYPES)
-    description = models.TextField(null=True, blank=True)
-    thing = models.ForeignKey('things.Thing', null=False, blank=False, related_name='values')
-    # channel = models.ForeignKey('InputChannel', null=False, blank=False, related_name='values')
+    device = models.ForeignKey('devices.Device', null=False, blank=False, related_name='values')
     json_path = models.CharField(max_length=128, null=False, blank=False, default='$.value')
     ttl_seconds = models.IntegerField(null=False, blank=False, default=15)
     data = JSONField(null=True, blank=True)
@@ -57,7 +56,7 @@ class Value(EventEmitter, models.Model):
             success = True
             # self.emit('value:change', data=data)
         self.date_last_updated = now()
-        if self.last_alive_state == False:
+        if not self.last_alive_state:
             self.last_alive_state = True
             event_data['is_alive'] = True
         self.emit('value:change', **event_data)
@@ -77,7 +76,8 @@ class Value(EventEmitter, models.Model):
 
     @property
     def is_alive(self):
-        return (self.date_last_updated is not None) and (now() < self.date_last_updated + timedelta(seconds=self.ttl_seconds))
+        return (self.date_last_updated is not None) and \
+            (now() < self.date_last_updated + timedelta(seconds=self.ttl_seconds))
 
     def check_alive_state(self):
         if self.is_alive != self.last_alive_state:
@@ -87,9 +87,9 @@ class Value(EventEmitter, models.Model):
             self.emit('value:change', is_alive=self.is_alive)
 
     def __str__(self):
-        return 'Value {} of channel {}'.format(
-            self.id,
-            self.channel.id
+        return '<Device {}, value {}>'.format(
+            self.device.id,
+            self.id
         )
 
     __repr__ = __str__

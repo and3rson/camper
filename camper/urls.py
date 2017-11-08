@@ -16,10 +16,9 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from camper.core.viewsets import StatsView
-from camper.channels.viewsets import InputChannelViewSet
 from camper.values.viewsets import ValueViewSet
 from camper.events.viewsets import EventViewSet
-from camper.things.viewsets import ThingViewSet
+from camper.devices.viewsets import DeviceViewSet
 from camper.controls.viewsets import (
     ControlViewSet,
     SwitchControlViewSet,
@@ -32,10 +31,10 @@ schema_view = get_swagger_view(title='Camper API')
 
 router = DefaultRouter()
 
-router.register('channels', InputChannelViewSet, base_name='inputchannel')
 router.register('values', ValueViewSet, base_name='value')
 router.register('events', EventViewSet, base_name='event')
-router.register('things', ThingViewSet, base_name='thing')
+router.register('devices', DeviceViewSet, base_name='device')
+router.register('channels', DeviceViewSet, base_name='channel')
 router.register('stats', StatsView, base_name='stats')
 router.register('controls/switches', SwitchControlViewSet, base_name='switchcontrol')
 router.register('controls/ranges', RangeControlViewSet, base_name='rangecontrol')

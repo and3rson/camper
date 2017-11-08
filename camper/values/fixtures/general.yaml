@@ -2,8 +2,8 @@
   pk: bedroom-esp-temperature
   fields:
     owner: 1
-    description: Temperature value
-    thing: bedroom-esp
+    name: Temperature value
+    device: bedroom-esp
     json_path: '$.temperature'
     value_type: 'temperature'
     data: 27
@@ -13,8 +13,8 @@
   pk: bedroom-esp-humidity
   fields:
     owner: 1
-    description: Humidity value
-    thing: bedroom-esp
+    name: Humidity value
+    device: bedroom-esp
     json_path: '$.humidity'
     value_type: 'humidity'
     data: 70
@@ -24,8 +24,8 @@
   pk: bedroom-esp-brightness
   fields:
     owner: 1
-    description: Brightness in room
-    thing: bedroom-esp
+    name: Brightness in room
+    device: bedroom-esp
     json_path: '$.brightness'
     value_type: 'brightness'
     data: 50
@@ -35,19 +35,10 @@
   pk: kitchen-esp-curtains
   fields:
     owner: 1
-    description: Kitchen curtains
-    thing: kitchen-esp
+    name: Kitchen curtains
+    device: kitchen-esp
     json_path: '$.curtains'
     value_type: 'rotation'
     data: 30
     ttl_seconds: 360
-
-#- model: channels.Value
-#  pk: dht11-temp-outside
-#  fields:
-#      description: Temperature outside value
-#      channel: esp-kitchen
-#      json_path: '$.temperature_outside'
-#      value_type: 'temperature'
-#      data: 27
 

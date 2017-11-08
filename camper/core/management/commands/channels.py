@@ -34,7 +34,7 @@ class Server(object):
     def main(self):
         self.poller.register(self.socket, Server.READ_ONLY)
         while True:
-            print('Polling, known sockets:', len(self.fd_socket_map))
+            # print('Polling, known sockets:', len(self.fd_socket_map))
             for fd, flag in self.poller.poll(1000):
                 conn = self.fd_socket_map[fd]
                 if flag & (select.POLLIN | select.POLLPRI):
@@ -122,7 +122,7 @@ class EventListener(Thread):
 
         for event in pubsub.listen():
             if event['type'] == 'message':
-                print('Got event', event)
+                # print('Got event', event)
                 data = json.loads(event['data'])
                 self.server.broadcast(data['username'], 'DATA', data['value'] + ' ' + json.dumps(data['data']))
 

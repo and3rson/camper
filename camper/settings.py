@@ -43,8 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'camper.core',
-    'camper.things',
-    'camper.channels',
+    'camper.devices',
     'camper.values',
     'camper.events',
     'camper.controls',

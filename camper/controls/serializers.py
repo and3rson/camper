@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from . import models
-# from camper.values.serializers import ValueSerializer
 
 
 class ControlSerializer(serializers.ModelSerializer):
@@ -19,7 +18,6 @@ class ControlSerializer(serializers.ModelSerializer):
         serializer_class = SERIALIZERS[instance.__class__]
         return serializer_class(instance=instance, context=self.context).data
 
-    # value = ValueSerializer(many=False)
 
 class SwitchControlSerializer(serializers.ModelSerializer):
     class Meta(ControlSerializer.Meta):

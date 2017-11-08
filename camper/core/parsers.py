@@ -25,6 +25,9 @@ class DataQueryParser(parsers.BaseParser):
                         node = node[part]
                 node[part] = value
             except TypeError:
-                raise ValidationError(detail='Malformed data structure in payload: attempt to assign to scalar value as to dictionary.')
+                raise ValidationError(
+                    detail='Malformed data structure in payload: '
+                    'attempt to assign to scalar value as to dictionary.'
+                )
         return data
 

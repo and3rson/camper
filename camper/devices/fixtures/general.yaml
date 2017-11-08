@@ -1,0 +1,12 @@
+- model: devices.Device
+  pk: bedroom-esp
+  fields:
+      owner: 1
+      name: Bedroom
+
+- model: devices.Device
+  pk: kitchen-esp
+  fields:
+      owner: 1
+      name: Kitchen
+

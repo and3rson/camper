@@ -7,7 +7,7 @@ export class API extends EventEmitter {
         this.data = {
             channels: [],
             values: [],
-            things: [],
+            devices: [],
             lastEvent: null,
             isEventsInitialized: false
             //events: []
@@ -15,7 +15,7 @@ export class API extends EventEmitter {
 
         this.updateChannels();
         this.updateValues();
-        this.updateThings();
+        this.updateDevices();
         this.startEventPolling();
     }
 
@@ -62,10 +62,10 @@ export class API extends EventEmitter {
         });
     }
 
-    updateThings() {
-        return this.request({url: '/api/things/'}).then(things => {
-            this.data.things = things;
-            this.emit('things:change', things);
+    updateDevices() {
+        return this.request({url: '/api/devices/'}).then(devices => {
+            this.data.devices = devices;
+            this.emit('devices:change', devices);
         });
     }
 
@@ -81,27 +81,27 @@ export class API extends EventEmitter {
         }).then(events => {
             if (this.data.isEventsInitialized) {
                 //let changedValues = [];
-                //let changedThings = [];
+                //let changedDevices = [];
                 //events.forEach(event => {
                 //    if (event.type == 'thing-value-changed') {
                 //        this.data.values.filter(value => value.id == event.object_id).forEach(value => {
                 //            value.date_last_updated = event.date_created;
                 //            value.data = event.data;
                 //            changedValues.push(value);
-                //            this.data.things.forEach(thing => {
+                //            this.data.devices.forEach(thing => {
                 //                thing.values.forEach(thingValue => {
                 //                    if (thingValue.id == value.id) {
                 //                        thingValue.date_last_updated = event.date_created;
                 //                        thingValue.data = event.data;
-                //                        changedThings.push(thing);
+                //                        changedDevices.push(thing);
                 //                    }
                 //                });
                 //            });
                 //        });
                 //    } else if (event.type == 'thing-alive-state-changed') {
-                //        this.data.things.filter(thing => thing.id == event.object_id).forEach(thing => {
+                //        this.data.devices.filter(thing => thing.id == event.object_id).forEach(thing => {
                 //            thing.is_alive = event.data;
-                //            changedThings.push(thing);
+                //            changedDevices.push(thing);
                 //        });
                 //    } else {
                 //        console.error('Received unknown event from server:', event);
@@ -111,12 +111,12 @@ export class API extends EventEmitter {
                 //    console.log('changedValues:', changedValues);
                 //    this.emit('values:change', this.data.values);
                 //}
-                //if (changedThings.length) {
-                //    console.log('changedThings:', changedThings);
-                //    this.emit('things:change', this.data.things);
+                //if (changedDevices.length) {
+                //    console.log('changedDevices:', changedDevices);
+                //    this.emit('devices:change', this.data.devices);
                 //}
                 if (events.length) {
-                    this.updateThings();
+                    this.updateDevices();
                     this.updateValues();
                 }
             }

@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class Event(models.Model):
     TYPES = (
-        ('thing:change', 'Thing changed'),
+        ('device:change', 'Device changed'),
         ('value:change', 'Value changed'),
     )
 
@@ -19,6 +19,5 @@ class Event(models.Model):
     object_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.SlugField()
     object = GenericForeignKey('object_type', 'object_id')
-    # object = models.ForeignKey('Value', null=False, blank=False)
     data = JSONField(null=True, blank=True)
 

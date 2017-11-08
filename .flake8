@@ -40,7 +40,9 @@ exclude =
     .env3,
     .env36,
     .venv,
-    .git
+    .git,
+    migrations,
+    manage.py
 
 # format = \e[31mERROR:\e[0m %(path)s:%(row)d:%(col)d: \e[31m%(code)s\e[0m %(text)s
 # format = \e[36m%(path)s\e[0m:\e[1;33m%(row)d\e[0m:\e[1;32m%(col)d\e[0m: \e[1;31m%(code)s\e[0m %(text)s

@@ -16,7 +16,7 @@ import DashboardIcon from 'material-ui/svg-icons/action/dashboard.js';
 import ChannelsIcon from 'material-ui/svg-icons/communication/call-split.js';
 //import ChannelsIcon from 'material-ui/svg-icons/action/settings-input-component.js';
 import ValuesIcon from 'material-ui/svg-icons/editor/insert-drive-file.js';
-import ThingsIcon from 'material-ui/svg-icons/device/nfc.js';
+import DevicesIcon from 'material-ui/svg-icons/device/nfc.js';
 import SettingsIcon from 'material-ui/svg-icons/action/settings.js';
 import { yellow500 } from 'material-ui/styles/colors';
 //import { Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
@@ -47,7 +47,7 @@ class Sidebar extends React.Component {
     }
 
     getStyle(value) {
-        if (value == (getHash() || 'things')) {
+        if (value == (getHash() || 'devices')) {
             return {backgroundColor: '#E8E8E8'};
         }
         return {};
@@ -57,7 +57,7 @@ class Sidebar extends React.Component {
         // <MenuItem primaryText="Dashboard" value="dashboard" leftIcon={<DashboardIcon />} style={this.getStyle('dashboard')} />
         return (
             <Menu autoWidth={true} onChange={this.onMenuItemChange.bind(this)}>
-                <MenuItem primaryText="Things" value="things" leftIcon={<ThingsIcon />} style={this.getStyle('things')} />
+                <MenuItem primaryText="Devices" value="devices" leftIcon={<DevicesIcon />} style={this.getStyle('devices')} />
                 <MenuItem primaryText="Values" value="values" leftIcon={<ValuesIcon />} style={this.getStyle('values')} />
                 <MenuItem primaryText="Channels" value="channels" leftIcon={<ChannelsIcon />} style={this.getStyle('channels')} />
                 <MenuItem primaryText="Settings" value="settings" leftIcon={<SettingsIcon />} style={this.getStyle('settings')} />
@@ -84,7 +84,7 @@ class BottomBar extends React.Component {
 
     getSelectedIndex() {
         switch (getHash()) {
-            case 'things':
+            case 'devices':
                 return 0
             case 'values':
                 return 1
@@ -102,9 +102,9 @@ class BottomBar extends React.Component {
             <Paper zDepth={1}>
                 <BottomNavigation selectedIndex={this.getSelectedIndex()}>
                     <BottomNavigationItem
-                        label="Things"
-                        icon={<ThingsIcon />}
-                        onClick={() => this.onMenuItemChange(null, 'things')}
+                        label="Devices"
+                        icon={<DevicesIcon />}
+                        onClick={() => this.onMenuItemChange(null, 'devices')}
                     />
                     <BottomNavigationItem
                         label="Values"
@@ -137,29 +137,29 @@ class DashboardPage extends React.Component {
         super();
 
         this.state = {
-            thingsCount: api.data.things.length,
+            devicesCount: api.data.devices.length,
             valuesCount: api.data.values.length,
             channelsCount: api.data.channels.length
         };
-        this.updateThingsCount = this.updateThingsCount.bind(this);
+        this.updateDevicesCount = this.updateDevicesCount.bind(this);
         this.updateValuesCount = this.updateValuesCount.bind(this);
         this.updateChannelsCount = this.updateChannelsCount.bind(this);
     }
 
     componentDidMount() {
-        api.on('things:change', this.updateThingsCount);
+        api.on('devices:change', this.updateDevicesCount);
         api.on('values:change', this.updateValuesCount);
         api.on('channels:change', this.updateChannelsCount);
     }
 
     componentWillUnmount() {
-        api.removeListener('things:change', this.updateThingsCount);
+        api.removeListener('devices:change', this.updateDevicesCount);
         api.removeListener('values:change', this.updateValuesCount);
         api.removeListener('channels:change', this.updateChannelsCount);
     }
 
-    updateThingsCount(things) {
-        this.setState({thingsCount: things.length});
+    updateDevicesCount(devices) {
+        this.setState({devicesCount: devices.length});
     }
 
     updateValuesCount(values) {
@@ -174,8 +174,8 @@ class DashboardPage extends React.Component {
         return (
             <Row>
                 <Col xs={12} md={4} style={{textAlign: 'center'}}>
-                    <h1>{this.state.thingsCount}</h1>
-                    <div>Things</div>
+                    <h1>{this.state.devicesCount}</h1>
+                    <div>Devices</div>
                 </Col>
                 <Col xs={12} md={4} style={{textAlign: 'center'}}>
                     <h1>{this.state.valuesCount}</h1>
@@ -320,32 +320,32 @@ class ValueView extends React.Component {
     }
 }
 
-class ThingsPage extends React.Component {
+class DevicesPage extends React.Component {
     constructor() {
         super();
 
         this.state = {
-            things: api.data.things
+            devices: api.data.devices
         };
-        this.updateThings = this.updateThings.bind(this);
+        this.updateDevices = this.updateDevices.bind(this);
     }
     componentDidMount() {
-        api.on('things:change', this.updateThings);
+        api.on('devices:change', this.updateDevices);
     }
     componentWillUnmount() {
-        api.removeListener('things:change', this.updateThings);
+        api.removeListener('devices:change', this.updateDevices);
     }
-    updateThings(things) {
-        console.log('Things changed');
-        this.setState({things: things});
+    updateDevices(devices) {
+        console.log('Devices changed');
+        this.setState({devices: devices});
     }
     render() {
         return (
             <div>
                 <Row>
-                    {this.state.things.map((thing, i) => (
+                    {this.state.devices.map((device, i) => (
                         <Col xs={12} md={6} lg={4} key={i}>
-                            <ThingView model={thing} key={i} />
+                            <DeviceView model={device} key={i} />
                         </Col>
                     ))}
                 </Row>
@@ -354,7 +354,7 @@ class ThingsPage extends React.Component {
     }
 }
 
-class ThingView extends React.Component {
+class DeviceView extends React.Component {
     constructor() {
         super();
         this.types = {
@@ -459,7 +459,7 @@ class SettingsPage extends React.Component {
     save() {
         window.localStorage.camperUsername = this.data.username;
         window.localStorage.camperPassword = this.data.password;
-        window.location = '#things';
+        window.location = '#devices';
         window.location.reload();
     }
 }
@@ -468,13 +468,13 @@ class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            page: getHash() || 'things'
+            page: getHash() || 'devices'
         };
         this.pageMap = {
             //'dashboard': <DashboardPage />,
             'channels': <ChannelsPage />,
             'values': <ValuesPage />,
-            'things': <ThingsPage />,
+            'devices': <DevicesPage />,
             'settings': <SettingsPage />
         };
     }

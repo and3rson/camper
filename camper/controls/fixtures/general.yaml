@@ -4,6 +4,7 @@
       name: Kitchen curtains
       owner: 1
       value: kitchen-esp-curtains
+
 - model: controls.RangeControl
   pk: kitchen-esp-curtains-control
   fields:

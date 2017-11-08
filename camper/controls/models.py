@@ -1,11 +1,10 @@
 from django.db import models
 from model_utils.managers import InheritanceManager
-from django.contrib.postgres.fields import JSONField
 
 
 class Control(models.Model):
     id = models.SlugField(null=False, blank=False, primary_key=True, editable=True)
-    name = models.CharField(max_length=32, null=False, blank=False)
+    name = models.CharField(max_length=128, null=False, blank=False)
     owner = models.ForeignKey('auth.User', null=False, blank=False, related_name='controls')
     value = models.ForeignKey('values.Value', null=False, blank=False, related_name='controls')
 
