@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from redis import StrictRedis
 
 
 class Channel(models.Model):
@@ -31,7 +30,4 @@ class InputChannel(Channel):
 
 class OutputChannel(Channel):
     destination_url = models.URLField(null=False, blank=False)
-
-
-redis = StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 

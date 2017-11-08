@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from . import models
+# from camper.values.serializers import ValueSerializer
 
 
 class ControlSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Control
         fields = (
-            'id', 'url', 'name', 'owner', 'type'
+            'id', 'url', 'name', 'owner', 'type',
         )
         read_only_fields = ('owner',)
 
@@ -18,6 +19,8 @@ class ControlSerializer(serializers.ModelSerializer):
         serializer_class = SERIALIZERS[instance.__class__]
         return serializer_class(instance=instance, context=self.context).data
 
+    # value = ValueSerializer(many=False)
+
 class SwitchControlSerializer(serializers.ModelSerializer):
     class Meta(ControlSerializer.Meta):
         model = models.SwitchControl
@@ -27,5 +30,5 @@ class SwitchControlSerializer(serializers.ModelSerializer):
 class RangeControlSerializer(serializers.ModelSerializer):
     class Meta(ControlSerializer.Meta):
         model = models.RangeControl
-        fields = ControlSerializer.Meta.fields + ('min_value', 'max_value', 'default_value', 'step', 'is_float')
+        fields = ControlSerializer.Meta.fields + ('min_value', 'max_value', 'step', 'is_float')
 

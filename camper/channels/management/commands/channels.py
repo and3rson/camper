@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
-from camper.channels.models import redis
+from camper.core.utils import redis
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 import select
@@ -124,5 +124,5 @@ class EventListener(Thread):
             if event['type'] == 'message':
                 print('Got event', event)
                 data = json.loads(event['data'])
-                self.server.broadcast(data['username'], 'DATA', data['channel'] + ' ' + data['data'])
+                self.server.broadcast(data['username'], 'DATA', data['value'] + ' ' + json.dumps(data['data']))
 

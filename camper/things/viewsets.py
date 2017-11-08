@@ -15,8 +15,9 @@ class ThingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return models.Thing.objects.prefetch_related(
-            'input_channels', 'values', Prefetch(
-                'controls', Control.objects.select_subclasses()
+            'input_channels', 'values',
+            Prefetch(
+                'values__controls', Control.objects.select_subclasses()
             )
         ).filter(owner=self.request.user)
 

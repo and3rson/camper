@@ -428,42 +428,33 @@ class SettingsPage extends React.Component {
     constructor() {
         super();
 
-        this.state = {
-            username: 'admin',
-            password: 'admin'
-        };
         this.data = {
-            //username: window.localStorage.camperUsername,
-            //password: window.localStorage.camperPassword
+            username: window.localStorage.camperUsername,
+            password: window.localStorage.camperPassword
         };
     }
     render() {
-        return (
-            <Text>
-                Settings
-            </Text>
+        return (<Row>
+                <Col xs={12}>
+                    <TextField
+                        hintText="Username"
+                        onChange={(e, value) => { this.data.username = value; }}
+                        defaultValue={this.data.username}
+                    />
+                </Col>
+                <Col xs={12}>
+                    <TextField
+                        hintText="Password"
+                        type="password"
+                        onChange={(e, value) => { this.data.password = value; }}
+                        defaultValue={this.data.password}
+                    />
+                </Col>
+                <Col xs={12}>
+                    <FlatButton label="Save" onClick={this.save.bind(this)} />
+                </Col>
+            </Row>
         );
-        //    <Row>
-        //        <Col xs={12}>
-        //            <TextField
-        //                hintText="Username"
-        //                onChange={(e, value) => this.setState({username: value}) }}
-        //                defaultValue={this.data.username}
-        //            />
-        //        </Col>
-        //        <Col xs={12}>
-        //            <TextField
-        //                hintText="Password"
-        //                type="password"
-        //                onChange={(e, value) => { this.data.password = value; }}
-        //                defaultValue={this.data.password}
-        //            />
-        //        </Col>
-        //        <Col xs={12}>
-        //            <FlatButton label="Save" onClick={this.save.bind(this)} />
-        //        </Col>
-        //    </Row>
-        //);
     }
     save() {
         window.localStorage.camperUsername = this.data.username;

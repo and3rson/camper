@@ -1,12 +1,15 @@
+from json import dumps
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.utils.timezone import now
-from django.db.models import Avg
+from django.db.models import Avg, Prefetch
 from datetime import timedelta
 from . import models
 from . import serializers
+from camper.controls.models import Control
+from camper.core.utils import redis
 
 
 class ValueViewSet(viewsets.ModelViewSet):
@@ -17,7 +20,24 @@ class ValueViewSet(viewsets.ModelViewSet):
         return serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        return models.Value.objects.all().filter(owner=self.request.user)
+        return models.Value.objects.all().prefetch_related(
+            Prefetch(
+                'controls', Control.objects.select_subclasses()
+            )
+        ).filter(owner=self.request.user)
+
+    @detail_route(methods=['POST'], serializer_class=serializers.ValueSetSerializer)
+    def set(self, request, pk):
+        value = self.get_object()
+        serializer = serializers.ValueSetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        value.set(serializer.validated_data['data'])
+        redis.publish('output', dumps(dict(
+            username=value.owner.username,
+            value=value.id,
+            data=value.data
+        )))
+        return Response(serializer.data)
 
     @detail_route(methods=['GET'], serializer_class=serializers.ValueLogSerializer)
     def log(self, request, pk):

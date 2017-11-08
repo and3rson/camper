@@ -16,8 +16,9 @@ class Value(EventEmitter, models.Model):
         ('speed', 'Speed'),
         ('power', 'Power'),
         ('distance', 'Distance'),
-        ('other', 'Other'),
+        ('rotation', 'Rotation'),
         ('brightness', 'Brightness'),
+        ('other', 'Other'),
     )
 
     id = models.SlugField(null=False, blank=False, primary_key=True, editable=True)
@@ -67,6 +68,12 @@ class Value(EventEmitter, models.Model):
                 value=self,
                 data=self.data
             )
+
+    def set(self, data):
+        # print('Setting', self, 'data to', data)
+        self.data = data
+        self.save()
+        self.emit('value:change', data=data)
 
     @property
     def is_alive(self):

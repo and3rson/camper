@@ -1,34 +1,45 @@
 - model: values.Value
-  pk: dht11-temp
+  pk: bedroom-esp-temperature
   fields:
     owner: 1
     description: Temperature value
-    thing: dht11
+    thing: bedroom-esp
     json_path: '$.temperature'
     value_type: 'temperature'
     data: 27
     ttl_seconds: 360
 
 - model: values.Value
-  pk: dht11-humid
+  pk: bedroom-esp-humidity
   fields:
     owner: 1
     description: Humidity value
-    thing: dht11
+    thing: bedroom-esp
     json_path: '$.humidity'
     value_type: 'humidity'
     data: 70
     ttl_seconds: 360
 
 - model: values.Value
-  pk: ky018-bright
+  pk: bedroom-esp-brightness
   fields:
     owner: 1
     description: Brightness in room
-    thing: ky018
+    thing: bedroom-esp
     json_path: '$.brightness'
     value_type: 'brightness'
     data: 50
+    ttl_seconds: 360
+
+- model: values.Value
+  pk: kitchen-esp-curtains
+  fields:
+    owner: 1
+    description: Kitchen curtains
+    thing: kitchen-esp
+    json_path: '$.curtains'
+    value_type: 'rotation'
+    data: 30
     ttl_seconds: 360
 
 #- model: channels.Value

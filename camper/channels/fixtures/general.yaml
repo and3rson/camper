@@ -1,6 +1,12 @@
 - model: channels.InputChannel
-  pk: esp-kitchen
+  pk: bedroom
   fields:
     owner: 1
-    description: Kitchen sensor channel
+    description: Bedroom ESP channel
+
+- model: channels.InputChannel
+  pk: kitchen
+  fields:
+    owner: 1
+    description: Kitchen ESP channel
 

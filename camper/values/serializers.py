@@ -1,6 +1,7 @@
 from json import loads
 from . import models
 from rest_framework import serializers
+from camper.controls.serializers import ControlSerializer
 
 
 class ValueSerializer(serializers.ModelSerializer):
@@ -8,9 +9,11 @@ class ValueSerializer(serializers.ModelSerializer):
         model = models.Value
         fields = (
             'id', 'url', 'value_type', 'description', 'thing', 'json_path',
-            'ttl_seconds', 'data', 'date_last_updated', 'is_alive', 'last_error'
+            'ttl_seconds', 'data', 'date_last_updated', 'is_alive', 'last_error', 'controls', 'controls'
         )
         read_only_fields = ('date_last_updated', 'last_error', 'last_alive_state', 'is_alive')
+
+    controls = ControlSerializer(many=True)
 
     # data = serializers.SerializerMethodField()
 
@@ -22,6 +25,13 @@ class ValueSerializer(serializers.ModelSerializer):
     #         return obj.data
 
     # data = serializers.JSONField()
+
+
+class ValueSetSerializer(serializers.Serializer):
+    class Meta:
+        fields = ('data',)
+
+    data = serializers.JSONField(required=True)
 
 
 class ValueLogSerializer(serializers.ModelSerializer):

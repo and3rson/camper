@@ -1,33 +1,18 @@
 - model: things.Thing
-  pk: dht11
-  fields:
-    owner: 1
-    name: Kitchen climate
-    type: sensor
-    input_channels:
-        - esp-kitchen
-
-#- model: things.Thing
-#  pk: dht11-outside
-#  fields:
-#    name: Outside climate
-#    type: sensor
-#    values:
-#        - dht11-temp-outside
-
-- model: things.Thing
   pk: bedroom-esp
   fields:
-      owner: 1
-      name: Bedroom
-      type: switch
-
-- model: things.Thing
-  pk: ky018
-  fields:
     owner: 1
-    name: Light sensor
+    name: Bedroom
     type: sensor
     input_channels:
-        - esp-kitchen
+        - bedroom
+
+- model: things.Thing
+  pk: kitchen-esp
+  fields:
+      owner: 1
+      name: Kitchen
+      type: sensor
+      input_channels:
+          - kitchen
 
