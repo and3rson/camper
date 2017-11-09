@@ -8,6 +8,7 @@ services:
         command: ./bin/entrypoint.sh server
         links:
             - postgres
+            - redis
         ports:
             - 9090:9090
     worker:
@@ -18,7 +19,8 @@ services:
         command: ./bin/entrypoint.sh worker
         links:
             - postgres
-    worker:
+            - redis
+    channels:
         image: camper
         environment:
             DJANGO_SETTINGS_MODULE: camper.settings
@@ -26,6 +28,7 @@ services:
         command: ./bin/entrypoint.sh channels
         links:
             - postgres
+            - redis
         ports:
             - 9080:9080
     frontend:

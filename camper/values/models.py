@@ -42,31 +42,29 @@ class Value(EventEmitter, models.Model):
                 else:
                     data = data[part]
         except Exception as e:
+            # Error happened during update
             self.last_error = str(e)
-            event_data = dict(
-                last_error=self.last_error
-            )
-            # self.emit('value:change', last_error=self.last_error)
-            success = False
+
+            self.emit('value:change', last_error=self.last_error)
         else:
+            # Updated handled successfully
             self.data = data
-            event_data = dict(
-                data=data
-            )
-            success = True
-            # self.emit('value:change', data=data)
-        self.date_last_updated = now()
-        if not self.last_alive_state:
-            self.last_alive_state = True
-            event_data['is_alive'] = True
-        self.emit('value:change', **event_data)
-        self.save()
-        if success:
+
+            self.date_last_updated = now()
+            event_data = dict(data=data)
+            if not self.last_alive_state:
+                self.last_alive_state = True
+                event_data['is_alive'] = True
+
             ValueLog.objects.create(
                 owner=self.owner,
                 value=self,
                 data=self.data
             )
+
+            self.emit('value:change', **event_data)
+
+        self.save()
 
     def set(self, data):
         # print('Setting', self, 'data to', data)

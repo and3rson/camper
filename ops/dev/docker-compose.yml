@@ -10,6 +10,7 @@ services:
             - ../../camper:/root/camper/camper
         links:
             - postgres
+            - redis
         ports:
             - 9090:9090
     worker:
@@ -22,6 +23,7 @@ services:
             - ../../camper:/root/camper/camper
         links:
             - postgres
+            - redis
     channels:
         image: camper
         environment:
@@ -32,6 +34,7 @@ services:
             - ../../camper:/root/camper/camper
         links:
             - postgres
+            - redis
         ports:
             - 9080:9080
     frontend:

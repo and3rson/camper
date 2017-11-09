@@ -10,9 +10,9 @@ class ValueSerializer(serializers.ModelSerializer):
             'id', 'url', 'value_type', 'name', 'device', 'json_path',
             'ttl_seconds', 'data', 'date_last_updated', 'is_alive', 'last_error', 'controls', 'controls'
         )
-        read_only_fields = ('date_last_updated', 'last_error', 'last_alive_state', 'is_alive')
+        read_only_fields = ('date_last_updated', 'last_error', 'last_alive_state', 'is_alive', 'controls')
 
-    controls = ControlSerializer(many=True)
+    controls = ControlSerializer(many=True, read_only=True)
 
 
 class ValueSetSerializer(serializers.Serializer):
