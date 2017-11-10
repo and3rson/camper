@@ -5,9 +5,10 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from . import models
 from . import serializers
+from camper.values.models import Value
 from camper.controls.models import Control
 from django.db.models import Prefetch
-from camper.core.parsers import DataQueryParser
+from camper.core.parsers import DataQueryParser, JPEGParser
 
 
 class DeviceViewSet(viewsets.ModelViewSet):
@@ -17,7 +18,7 @@ class DeviceViewSet(viewsets.ModelViewSet):
     @detail_route(
         methods=['POST'],
         serializer_class=serializers.NotifySerializer,
-        parser_classes=[DataQueryParser, JSONParser]
+        parser_classes=[DataQueryParser, JSONParser, JPEGParser]
     )
     def notify(self, request, pk):
         device = self.get_object()
@@ -31,9 +32,11 @@ class DeviceViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return models.Device.objects.prefetch_related(
-            'values',
             Prefetch(
-                'values__controls', Control.objects.select_subclasses()
+                'values', Value.objects.order_by('name')
+            ),
+            Prefetch(
+                'values__controls', Control.objects.order_by('name').select_subclasses()
             )
-        ).filter(owner=self.request.user)
+        ).filter(owner=self.request.user).order_by('name')
 

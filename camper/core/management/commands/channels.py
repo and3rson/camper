@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
 from camper.core.utils import redis
 from threading import Thread
+import time
 import json
 import traceback
 import threading
@@ -11,21 +12,31 @@ import threading
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         print('Channel server started')
-        self.event_listener = EventListener()
-        self.event_listener.start()
         chan_server = ChannelServer(('0.0.0.0', 9080), ChannelHandler)
+        self.event_listener = EventListener(chan_server)
+        self.event_listener.start()
+        pinger = Pinger(chan_server)
+        pinger.start()
         chan_server.serve_forever()
 
 
 class ChannelServer(ThreadingMixIn, TCPServer):
-    pass
+    clients = []
+
+    def iter_clients(self):
+        for client in self.clients:
+            yield client
+
+    def broadcast(self, username, command, data):
+        for client in self.iter_clients():
+            if username is None or client.check_username(username):
+                client.request.sendall('{} {}\n'.format(command, data).encode('UTF-8'))
 
 
 class ChannelHandler(BaseRequestHandler):
-    clients = []
-
     def handle(self):
-        ChannelHandler.clients.append(self)
+        print(self.server)
+        self.server.clients.append(self)
         self.user = None
 
         while True:
@@ -33,7 +44,7 @@ class ChannelHandler(BaseRequestHandler):
                 self.process_data()
             except Exception as e:
                 print('Got error on client, dropping. Error was:', str(e))
-                ChannelHandler.clients.remove(self)
+                self.server.clients.remove(self)
                 return
 
     def process_data(self):
@@ -45,21 +56,21 @@ class ChannelHandler(BaseRequestHandler):
         cmd = cmd.upper()
         if cmd == 'AUTH':
             if self.is_authorized:
-                self.send(b'ER Already authorized.\r\n')
+                self.send(b'ER Already authorized.\n')
             else:
                 username, _, password = data.strip().partition(':')
                 user = authenticate(username=username, password=password)
                 if user:
                     self.user = user
-                    self.send(b'OK\r\n')
+                    self.send(b'OK\n')
                 else:
-                    self.send(b'ER Bad credentials.\r\n')
+                    self.send(b'ER Bad credentials.\n')
         else:
             if self.is_authorized:
                 print('Cmd', cmd, 'from user', self.user, 'with data', data)
-                self.send(b'OK\r\n')
+                self.send(b'OK\n')
             else:
-                self.send(b'ER Please AUTH first.\r\n')
+                self.send(b'ER Please AUTH first.\n')
 
     @property
     def is_authorized(self):
@@ -76,19 +87,12 @@ class ChannelHandler(BaseRequestHandler):
             traceback.print_exc()
             print('Ignoring above exception.')
 
-    @classmethod
-    def iter_clients(cls):
-        for client in cls.clients:
-            yield client
-
-    @classmethod
-    def broadcast(cls, username, command, data):
-        for client in cls.iter_clients():
-            if client.check_username(username):
-                client.request.sendall('{} {}\r\n'.format(command, data).encode('UTF-8'))
-
 
 class EventListener(Thread):
+    def __init__(self, server):
+        super().__init__()
+        self.server = server
+
     def run(self):
         pubsub = redis.pubsub()
         pubsub.subscribe('output')
@@ -97,5 +101,16 @@ class EventListener(Thread):
             if event['type'] == 'message':
                 # print('Got event', event)
                 data = json.loads(event['data'])
-                ChannelHandler.broadcast(data['username'], 'DATA', data['value'] + ' ' + json.dumps(data['data']))
+                self.server.broadcast(data['username'], 'DATA', data['value'] + ' ' + json.dumps(data['data']))
+
+
+class Pinger(Thread):
+    def __init__(self, server):
+        super().__init__()
+        self.server = server
+
+    def run(self):
+        while True:
+            self.server.broadcast(None, 'PING', str(int(time.time() * 1000000)))
+            time.sleep(5)
 

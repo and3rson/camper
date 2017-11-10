@@ -32,6 +32,17 @@
     ttl_seconds: 360
 
 - model: values.Value
+  pk: kitchen-esp-photo
+  fields:
+    owner: 1
+    name: Room photo
+    device: kitchen-esp
+    json_path: '$.url'
+    value_type: 'image'
+    data: null
+    ttl_seconds: 360
+
+- model: values.Value
   pk: kitchen-esp-curtains
   fields:
     owner: 1

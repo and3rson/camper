@@ -14,6 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.conf import settings
+from django.views.static import serve
 from django.contrib import admin
 from camper.core.viewsets import StatsView
 from camper.values.viewsets import ValueViewSet
@@ -44,6 +46,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
     url(r'^api/', include(router.urls)),
+    url(r'^media/(?P<path>.*)$', serve, dict(
+        document_root=settings.MEDIA_ROOT,
+    ), name='media'),
     url(r'^$', schema_view),
 ]
 

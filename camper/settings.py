@@ -132,6 +132,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Media config
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Grappelli config
 
 GRAPPELLI_ADMIN_TITLE = 'Camper admin'
