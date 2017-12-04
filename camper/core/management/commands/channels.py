@@ -34,6 +34,24 @@ class ChannelServer(ThreadingMixIn, TCPServer):
 
 
 class ChannelHandler(BaseRequestHandler):
+    HELLO_MSG = (
+        'Hi there!',
+        '',
+        'Here\'s what you can send:',
+        ' - "AUTH <username>:<password>" - authorize before you can do anything.',
+        ' - "DVID <device_id>" - to start receiving notifications from some device.',
+        '',
+        'Here\'s what you are going to receive:',
+        ' - "INFO <info>" - usage information (sent only at the very start, right now.)',
+        ' - "OKAY" - your last operation was successful.',
+        ' - "WARN <message>" - your last operation failed.',
+        ' - "PING <timestamp>" - the server will ping you every 5 seconds.',
+        ' - "DATA <device_id> <value_id> <json>" - some value has changed.',
+        '',
+        'Have fun!',
+        '',
+    )
+
     class ChannelError(Exception):
         pass
 
@@ -41,6 +59,9 @@ class ChannelHandler(BaseRequestHandler):
         self.user = None
         self.devices = []
         self.server.clients.append(self)
+
+        for msg in ChannelHandler.HELLO_MSG:
+            self.send('INFO {}\n'.format(msg))
 
         while True:
             try:
@@ -67,27 +88,27 @@ class ChannelHandler(BaseRequestHandler):
         cmd = cmd.upper()
         if cmd == 'AUTH':
             if self.is_authorized:
-                self.send(b'ER Already authorized.\n')
+                self.send(b'WARN Already authorized.\n')
                 return
             username, _, password = data.strip().partition(':')
             user = authenticate(username=username, password=password)
             if user:
                 self.user = user
-                self.send(b'OK\n')
+                self.send(b'OKAY\n')
             else:
-                self.send(b'ER Bad credentials.\n')
-        elif cmd == 'DEVID':
+                self.send(b'WARN Bad credentials.\n')
+        elif cmd == 'DVID':
             if not self.is_authorized:
-                self.send(b'ER Please AUTH first.\n')
+                self.send(b'WARN Please AUTH first.\n')
                 return
             device = Device.objects.filter(id=data.strip(), owner=self.user).first()
             if not device:
-                self.send(b'ER Unknown device ID.\n')
+                self.send(b'WARN Unknown device ID.\n')
                 return
             self.devices.append(device)
-            self.send(b'OK\n')
+            self.send(b'OKAY\n')
         else:
-            self.send(b'ER Unknown command.\n')
+            self.send(b'WARN Unknown command.\n')
 
     @property
     def is_authorized(self):
