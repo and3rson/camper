@@ -124,15 +124,25 @@ class EventListener(Thread):
 
         for event in pubsub.listen():
             if event['type'] == 'message':
-                data = json.loads(event['data'])
-                for client in self.server.iter_clients():
-                    if client.has_device(data['device_id']):
-                        logger.info('Sending %s to %s', data, client.user)
-                        client.send('DATA {} {} {}\n'.format(
-                            data['device_id'],
-                            data['value_id'],
-                            json.dumps(data['data'])
-                        ))
+                self.process_event(json.loads(event['data']))
+
+    def process_event(self, event_data):
+        for client in self.server.iter_clients():
+            if not client.has_device(event_data['device_id']):
+                continue
+            payload = json.dumps(event_data['data'])
+            logger.info(
+                'Sending update to %s: device = %s, value_id = %s, data = %s',
+                client.user,
+                event_data['device_id'],
+                event_data['value_id'],
+                payload
+            )
+            client.send('DATA {} {} {}\n'.format(
+                event_data['device_id'],
+                event_data['value_id'],
+                payload
+            ))
 
 
 class Pinger(Thread):
