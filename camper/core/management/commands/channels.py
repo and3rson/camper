@@ -1,17 +1,22 @@
 from socketserver import TCPServer, BaseRequestHandler, ThreadingMixIn
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
 from camper.core.utils import redis
+from camper.devices.models import Device
 from threading import Thread
 import time
 import json
-import traceback
-import threading
+import logging
+import logging.config
+
+logging.config.dictConfig(settings.LOGGING)
+logger = logging.getLogger('internal')
 
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        print('Channel server started')
+        logger.info('Channel server started')
         chan_server = ChannelServer(('0.0.0.0', 9080), ChannelHandler)
         self.event_listener = EventListener(chan_server)
         self.event_listener.start()
@@ -27,65 +32,85 @@ class ChannelServer(ThreadingMixIn, TCPServer):
         for client in self.clients:
             yield client
 
-    def broadcast(self, username, command, data):
-        for client in self.iter_clients():
-            if username is None or client.check_username(username):
-                client.request.sendall('{} {}\n'.format(command, data).encode('UTF-8'))
-
 
 class ChannelHandler(BaseRequestHandler):
+    class ChannelError(Exception):
+        pass
+
     def handle(self):
-        print(self.server)
-        self.server.clients.append(self)
         self.user = None
+        self.devices = []
+        self.server.clients.append(self)
 
         while True:
             try:
                 self.process_data()
+            except ChannelHandler.ChannelError as e:
+                logger.warn('Dropping client %s: %s', self, str(e))
+                self.server.clients.remove(self)
+                return
             except Exception as e:
-                print('Got error on client, dropping. Error was:', str(e))
+                logger.exception('Got exception on client %s, dropping.', self)
                 self.server.clients.remove(self)
                 return
 
     def process_data(self):
-        print('Handling thread', threading.current_thread())
-        data = self.request.recv(1024).decode('utf-8')
+        try:
+            data = self.request.recv(1024).decode('utf-8')
+        except Exception as e:
+            raise ChannelHandler.ChannelError('Failed to decode data as UTF-8')
         if not data:
-            raise Exception('Received empty response')
-        cmd, _, data = data.strip().partition(' ')
+            raise ChannelHandler.ChannelError('Received empty response')
+        data = data.strip()
+        logger.debug('Data from client %s: %s', self, data)
+        cmd, _, data = data.partition(' ')
         cmd = cmd.upper()
         if cmd == 'AUTH':
             if self.is_authorized:
                 self.send(b'ER Already authorized.\n')
-            else:
-                username, _, password = data.strip().partition(':')
-                user = authenticate(username=username, password=password)
-                if user:
-                    self.user = user
-                    self.send(b'OK\n')
-                else:
-                    self.send(b'ER Bad credentials.\n')
-        else:
-            if self.is_authorized:
-                print('Cmd', cmd, 'from user', self.user, 'with data', data)
+                return
+            username, _, password = data.strip().partition(':')
+            user = authenticate(username=username, password=password)
+            if user:
+                self.user = user
                 self.send(b'OK\n')
             else:
+                self.send(b'ER Bad credentials.\n')
+        elif cmd == 'DEVID':
+            if not self.is_authorized:
                 self.send(b'ER Please AUTH first.\n')
+                return
+            device = Device.objects.filter(id=data.strip(), owner=self.user).first()
+            if not device:
+                self.send(b'ER Unknown device ID.\n')
+                return
+            self.devices.append(device)
+            self.send(b'OK\n')
+        else:
+            self.send(b'ER Unknown command.\n')
 
     @property
     def is_authorized(self):
         return self.user is not None
 
+    def has_device(self, device_id):
+        return self.is_authorized and device_id in [device.id for device in self.devices]
+
     def check_username(self, username):
         return self.is_authorized and self.user.username == username
 
     def send(self, data):
+        if isinstance(data, str):
+            data = data.encode('UTF-8')
         try:
             self.request.sendall(data)
         except Exception as e:
-            print('Got an error while trying to send data:')
-            traceback.print_exc()
-            print('Ignoring above exception.')
+            logger.exception('Got an error while trying to send data.')
+
+    def __repr__(self):
+        return '<ChannelHandler user={}>'.format(self.user)
+
+    __str__ = __repr__
 
 
 class EventListener(Thread):
@@ -99,9 +124,15 @@ class EventListener(Thread):
 
         for event in pubsub.listen():
             if event['type'] == 'message':
-                # print('Got event', event)
                 data = json.loads(event['data'])
-                self.server.broadcast(data['username'], 'DATA', data['value'] + ' ' + json.dumps(data['data']))
+                for client in self.server.iter_clients():
+                    if client.has_device(data['device_id']):
+                        logger.info('Sending %s to %s', data, client.user)
+                        client.send('DATA {} {} {}\n'.format(
+                            data['device_id'],
+                            data['value_id'],
+                            json.dumps(data['data'])
+                        ))
 
 
 class Pinger(Thread):
@@ -111,6 +142,7 @@ class Pinger(Thread):
 
     def run(self):
         while True:
-            self.server.broadcast(None, 'PING', str(int(time.time() * 1000000)))
+            for client in self.server.iter_clients():
+                client.send('PING {}\n'.format(str(int(time.time() * 1000000))))
             time.sleep(5)
 

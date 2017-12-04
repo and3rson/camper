@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 from django.utils.timezone import now
 from django.db.models import Prefetch
 from datetime import timedelta
@@ -10,6 +11,7 @@ from . import models
 from . import serializers
 from camper.controls.models import Control
 from camper.core.utils import redis
+from camper.core.parsers import DataQueryParser
 
 
 class ValueViewSet(viewsets.ModelViewSet):
@@ -26,7 +28,11 @@ class ValueViewSet(viewsets.ModelViewSet):
             )
         ).filter(owner=self.request.user)
 
-    @detail_route(methods=['POST'], serializer_class=serializers.ValueSetSerializer)
+    @detail_route(
+        methods=['POST'],
+        serializer_class=serializers.ValueSetSerializer,
+        parser_classes=[DataQueryParser, JSONParser]
+    )
     def set(self, request, pk):
         value = self.get_object()
         serializer = serializers.ValueSetSerializer(data=request.data)
@@ -34,7 +40,8 @@ class ValueViewSet(viewsets.ModelViewSet):
         value.set(serializer.validated_data['data'])
         redis.publish('output', dumps(dict(
             username=value.owner.username,
-            value=value.id,
+            device_id=value.device.id,
+            value_id=value.id,
             data=value.data
         )))
         return Response(serializer.data)

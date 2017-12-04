@@ -5,6 +5,9 @@ from rest_framework.exceptions import ValidationError
 from json import loads
 from django.conf import settings
 from django.core.urlresolvers import reverse
+import logging
+
+logger = logging.getLogger('internal')
 
 
 class DataQueryParser(parsers.BaseParser):
@@ -12,7 +15,6 @@ class DataQueryParser(parsers.BaseParser):
 
     def parse(self, stream, media_type=None, parser_context=None):
         raw = stream.read().decode('utf-8')
-        print('Received payload:', raw)
         data = dict()
         for key, _, value in [pair.partition('=') for pair in raw.split('&')]:
             try:
@@ -28,11 +30,13 @@ class DataQueryParser(parsers.BaseParser):
                     if i < len(path) - 1:
                         node = node[part]
                 node[part] = value
-            except TypeError:
+            except TypeError as e:
+                logger.error('Bad payload for text/x-data-query: %s', raw)
                 raise ValidationError(
                     detail='Malformed data structure in payload: '
                     'attempt to assign to scalar value as to dictionary.'
                 )
+        # logger.debug('Received payload for text/x-data-query: %s', raw)
         return data
 
 

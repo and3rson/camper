@@ -1,4 +1,7 @@
 from django.db import models
+import logging
+
+logger = logging.getLogger('internal')
 
 
 class Device(models.Model):
@@ -11,6 +14,7 @@ class Device(models.Model):
         return self.name
 
     def notify(self, data):
+        logger.debug('Received notification for device %s: %s', self, data)
         for value in self.values.all():
             value.notify(data)
 

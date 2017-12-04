@@ -171,3 +171,47 @@ REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 REDIS_DB = 0
 
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': '%(log_color)s[%(asctime)s] %(levelname)s: %(module)s: %(message)s',
+            'log_colors': {
+                'DEBUG': 'cyan',
+                'INFO': 'white',
+                'WARNING': 'yellow',
+                'ERROR': 'red',
+                'CRITICAL': 'bold_red',
+            },
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.db': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'internal': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    },
+}
+

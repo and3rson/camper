@@ -4,6 +4,9 @@ from django.contrib.postgres.fields import JSONField
 from django.utils.timezone import now
 from datetime import timedelta
 from camper.events.mixins import EventEmitter
+import logging
+
+logger = logging.getLogger('internal')
 
 
 class Value(EventEmitter, models.Model):
@@ -43,11 +46,13 @@ class Value(EventEmitter, models.Model):
                 else:
                     data = data[part]
         except Exception as e:
+            logger.error('Failed to update value %s (%s: %s)', self, e.__class__.__name__, str(e))
             # Error happened during update
             self.last_error = str(e)
 
             self.emit('value:change', last_error=self.last_error)
         else:
+            logger.info('Updated device %s with value %s', self, data)
             # Updated handled successfully
             self.data = data
 

@@ -9,6 +9,9 @@ from camper.values.models import Value
 from camper.controls.models import Control
 from django.db.models import Prefetch
 from camper.core.parsers import DataQueryParser, JPEGParser
+import logging
+
+logger = logging.getLogger('internal')
 
 
 class DeviceViewSet(viewsets.ModelViewSet):
@@ -23,7 +26,11 @@ class DeviceViewSet(viewsets.ModelViewSet):
     def notify(self, request, pk):
         device = self.get_object()
         serializer = serializers.NotifySerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            logger.exception('Bad notification for device %s: %s', pk, e)
+            raise
         device.notify(serializer.validated_data['data'])
         return Response(serializer.data)
 
