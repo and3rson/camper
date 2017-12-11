@@ -3,7 +3,7 @@ from model_utils.managers import InheritanceManager
 
 
 class Control(models.Model):
-    id = models.SlugField(null=False, blank=False, primary_key=True, editable=True)
+    id = models.SlugField(null=False, blank=False, primary_key=True, editable=True, max_length=100)
     name = models.CharField(max_length=128, null=False, blank=False)
     owner = models.ForeignKey('auth.User', null=False, blank=False, related_name='controls')
     value = models.ForeignKey('values.Value', null=False, blank=False, related_name='controls')

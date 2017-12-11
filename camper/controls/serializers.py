@@ -19,17 +19,23 @@ class ControlSerializer(serializers.ModelSerializer):
         serializer_class = SERIALIZERS[instance.__class__]
         return serializer_class(instance=instance, context=self.context).data
 
-    value_id = serializers.PrimaryKeyRelatedField(queryset=Value.objects.all())
+    value_id = serializers.PrimaryKeyRelatedField(queryset=Value.objects.all(), read_only=False, source='value')
 
 
 class SwitchControlSerializer(serializers.ModelSerializer):
-    class Meta(ControlSerializer.Meta):
+    class Meta:
         model = models.SwitchControl
         fields = ControlSerializer.Meta.fields + ('is_enabled',)
+        read_only_fields = ('owner',)
+
+    value_id = serializers.PrimaryKeyRelatedField(queryset=Value.objects.all(), read_only=False, source='value')
 
 
 class RangeControlSerializer(serializers.ModelSerializer):
-    class Meta(ControlSerializer.Meta):
+    class Meta:
         model = models.RangeControl
         fields = ControlSerializer.Meta.fields + ('min_value', 'max_value', 'step', 'is_float')
+        read_only_fields = ('owner',)
+
+    value_id = serializers.PrimaryKeyRelatedField(queryset=Value.objects.all(), read_only=False)
 
