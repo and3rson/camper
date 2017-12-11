@@ -22,6 +22,7 @@ class Value(EventEmitter, models.Model):
         ('rotation', 'Rotation'),
         ('brightness', 'Brightness'),
         ('image', 'Image'),
+        ('state', 'State'),
         ('other', 'Other'),
     )
 
