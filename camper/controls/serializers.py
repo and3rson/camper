@@ -16,7 +16,9 @@ class ControlSerializer(serializers.ModelSerializer):
             models.SwitchControl: SwitchControlSerializer,
             models.RangeControl: RangeControlSerializer
         }
-        serializer_class = SERIALIZERS[instance.__class__]
+        serializer_class = SERIALIZERS.get(instance.__class__)
+        if not serializer_class:
+            return super().to_representation(instance)
         return serializer_class(instance=instance, context=self.context).data
 
     value_id = serializers.PrimaryKeyRelatedField(queryset=Value.objects.all(), read_only=False, source='value')

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'camper.values',
     'camper.events',
     'camper.controls',
+    'camper.notifications',
 ]
 
 MIDDLEWARE = [
@@ -87,10 +88,10 @@ WSGI_APPLICATION = 'camper.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'postgres',
-        'NAME': 'camper',
-        'USER': 'camper',
-        'PASSWORD': 'camper'
+        'HOST': os.getenv('PG_HOST', 'postgres'),
+        'NAME': os.getenv('PG_DB', 'camper'),
+        'USER': os.getenv('PG_USER', 'camper'),
+        'PASSWORD': os.getenv('PG_PASS', 'camper')
     }
 }
 

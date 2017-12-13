@@ -11,6 +11,8 @@ services:
             - redis
         ports:
             - 9090:9090
+        volumes:
+            - ./media:/root/camper/media
     worker:
         image: camper
         environment:
